@@ -179,6 +179,7 @@
             }, 1000);
         }
 
+        // 只连一次，绝不重连
         function connect() {
             updateStatus("正在连接服务器...", "disconnected", false);
             ws = new WebSocket(WS_URL);
@@ -198,10 +199,11 @@
                 }
             };
 
+            // 断开后不重连
             ws.onclose = () => {
                 clearInterval(timer);
-                updateStatus("连接断开，正在重连...", "disconnected", false);
-                setTimeout(connect, 3000);
+                updateStatus("连接已断开，请刷新页面重新排队", "disconnected", false);
+                updateLog("🔌 连接已断开");
             };
         }
 
