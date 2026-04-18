@@ -34,31 +34,40 @@
             text-align: center;
             margin-bottom: 20px;
             font-size: 24px;
-            letter-spacing: 1px;
         }
         .status {
             text-align: center;
             padding: 12px;
             border-radius: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-weight: 500;
-            transition: all 0.3s ease;
         }
         .connected {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
+        .waiting {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
         .disconnected {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
-        .hint {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 13px;
-            margin-bottom: 15px;
+        .timer {
             text-align: center;
+            color: #fff;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+        .hint {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 15px;
         }
         .input-group {
             margin-bottom: 20px;
@@ -73,20 +82,14 @@
         input {
             flex: 1;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
             border-radius: 10px;
             color: #fff;
             font-size: 16px;
-            transition: all 0.3s ease;
         }
         input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            background: rgba(255, 255, 255, 0.15);
+            color: rgba(255,255,255,0.5);
         }
         button {
             padding: 15px;
@@ -95,31 +98,22 @@
             border: none;
             border-radius: 10px;
             font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
         button:disabled {
-            background: rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.5);
-            cursor: not-allowed;
-        }
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+            background: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.5);
         }
         .btn-modify {
-            width: auto;
             padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
         }
         .log {
             margin-top: 20px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             border-radius: 10px;
             padding: 15px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
+            color: rgba(255,255,255,0.8);
             text-align: center;
         }
     </style>
@@ -129,6 +123,7 @@
         <h1>游戏登录助手</h1>
         
         <div class="status disconnected" id="status">正在连接服务器...</div>
+        <div class="timer" id="timer"></div>
         <div class="hint">💡 温馨提示：请输入正确邮箱并确认后再发送</div>
 
         <div class="input-group">
@@ -154,20 +149,39 @@
         let ws;
         let emailSubmitted = false;
         let codeSubmitted = false;
-        const logEl = document.getElementById("log");
+        let timeLeft = 300;
+        let timer = null;
+        let canUse = false;
 
-        function updateStatus(text, className, isConnected) {
-            const statusEl = document.getElementById("status");
-            statusEl.textContent = text;
-            statusEl.className = `status ${className}`;
-            document.getElementById("emailBtn").disabled = !isConnected || emailSubmitted;
-            document.getElementById("codeBtn").disabled = !isConnected || codeSubmitted;
-            document.getElementById("emailInput").disabled = emailSubmitted;
-            document.getElementById("codeInput").disabled = codeSubmitted;
+        function updateStatus(text, cls, enable) {
+            document.getElementById("status").innerText = text;
+            document.getElementById("status").className = "status " + cls;
+            document.getElementById("emailBtn").disabled = !enable || emailSubmitted;
+            document.getElementById("codeBtn").disabled = !enable || codeSubmitted;
+            document.getElementById("emailInput").disabled = emailSubmitted || !enable;
+            document.getElementById("codeInput").disabled = codeSubmitted || !enable;
         }
 
         function updateLog(text) {
-            logEl.textContent = text;
+            document.getElementById("log").innerText = text;
+        }
+
+        function startTimer() {
+            if (timer) clearInterval(timer);
+            timeLeft = 300;
+            timer = setInterval(() => {
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                document.getElementById("timer").innerText = `⏱ 剩余操作时间：${m}分${s}秒`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    updateStatus("时间已到，请重新排队", "waiting", false);
+                    canUse = false;
+                    updateLog("⏳ 你的5分钟使用时间已结束");
+                    if (ws) ws.close();
+                }
+            }, 1000);
         }
 
         function connect() {
@@ -175,65 +189,58 @@
             ws = new WebSocket(WS_URL);
 
             ws.onopen = () => {
-                updateStatus("✅ 已连接到服务器", "connected", true);
+                updateStatus("已连接，等待分配使用权限", "waiting", false);
             };
 
-            ws.onmessage = (event) => {
-                const res = JSON.parse(event.data);
+            ws.onmessage = (e) => {
+                let data = JSON.parse(e.data);
+                if (data.status === "ok") {
+                    canUse = true;
+                    updateStatus("✅ 你已进入使用中（单人专属）", "connected", true);
+                    startTimer();
+                } else if (data.status === "waiting") {
+                    updateStatus("⌛ 排队中：当前有人在使用，请等待", "waiting", false);
+                }
             };
 
             ws.onclose = () => {
-                updateStatus("连接断开，正在重连...", "disconnected", false);
-                setTimeout(connect, 3000);
-            };
-
-            ws.onerror = () => {
-                updateStatus("连接错误，请检查 ngrok 地址", "disconnected", false);
+                canUse = false;
+                clearInterval(timer);
+                updateStatus("连接断开，刷新重试", "disconnected", false);
+                setTimeout(connect, 2000);
             };
         }
 
-        // 提交邮箱
         function sendEmail() {
-            const email = document.getElementById("emailInput").value.trim();
+            if (!canUse) return;
+            let email = document.getElementById("emailInput").value.trim();
             if (!email) return;
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                const message = JSON.stringify({ type: "email", content: email });
-                ws.send(message);
-                emailSubmitted = true;
-                document.getElementById("emailBtn").textContent = "已提交";
-                updateLog("✅ 邮箱已发送，注意查收验证码");
-                updateStatus("✅ 已连接到服务器", "connected", true);
-            }
+            ws.send(JSON.stringify({ type: "email", content: email }));
+            emailSubmitted = true;
+            document.getElementById("emailBtn").innerText = "已提交";
+            updateLog("✅ 邮箱已发送，注意查收验证码");
         }
 
-        // 修改邮箱
         function editEmail() {
             emailSubmitted = false;
-            document.getElementById("emailInput").disabled = false;
-            document.getElementById("emailBtn").textContent = "提交邮箱";
-            updateStatus("✅ 已连接到服务器", "connected", true);
+            document.getElementById("emailBtn").innerText = "提交邮箱";
+            updateStatus("✅ 你已进入使用中（单人专属）", "connected", canUse);
         }
 
-        // 提交验证码
         function sendCode() {
-            const code = document.getElementById("codeInput").value.trim();
+            if (!canUse) return;
+            let code = document.getElementById("codeInput").value.trim();
             if (!code) return;
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                const message = JSON.stringify({ type: "code", content: code });
-                ws.send(message);
-                codeSubmitted = true;
-                document.getElementById("codeBtn").textContent = "已提交";
-                updateLog("✅ 验证码已接收，请十分钟后上游戏");
-                updateStatus("✅ 已连接到服务器", "connected", true);
-            }
+            ws.send(JSON.stringify({ type: "code", content: code }));
+            codeSubmitted = true;
+            document.getElementById("codeBtn").innerText = "已提交";
+            updateLog("✅ 验证码已接收，请十分钟后上游戏");
         }
 
-        // 修改验证码
         function editCode() {
             codeSubmitted = false;
-            document.getElementById("codeInput").disabled = false;
-            document.getElementById("codeBtn").textContent = "提交验证码";
-            updateStatus("✅ 已连接到服务器", "connected", true);
+            document.getElementById("codeBtn").innerText = "提交验证码";
+            updateStatus("✅ 你已进入使用中（单人专属）", "connected", canUse);
         }
 
         window.onload = connect;
