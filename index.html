@@ -118,31 +118,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>游戏登录助手</h1>
-        <div class="status disconnected" id="status">正在连接...</div>
-        <div class="timer" id="timer"></div>
-        <div class="hint">💡 请输入正确邮箱并确认后再发送</div>
-
-        <div class="input-group">
-            <div class="input-wrapper">
-                <input type="email" id="emailInput" placeholder="邮箱">
-                <button class="btn-modify" onclick="editEmail()">修改</button>
-            </div>
-            <button onclick="sendEmail()" id="emailBtn" disabled>提交邮箱</button>
-        </div>
-
-        <div class="input-group">
-            <div class="input-wrapper">
-                <input type="text" id="codeInput" placeholder="验证码">
-                <button class="btn-modify" onclick="editCode()">修改</button>
-            </div>
-            <button onclick="sendCode()" id="codeBtn" disabled>提交验证码</button>
-        </div>
-
-        <div class="log" id="log"></div>
-    </div>
-    <script>
+ <script>
         const WS_URL = "wss://draw-residence-scrutiny.ngrok-free.dev";
         let ws;
         let emailSubmitted = false;
