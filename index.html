@@ -3,231 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA 游戏登录助手</title>
+    <title>游戏邮箱/验证码提交工具</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            padding: 20px;
         }
         .container {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 30px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         h1 {
+            color: #fff;
+            text-align: center;
             margin-bottom: 30px;
             font-size: 24px;
-            color: #00d4ff;
-        }
-        input, button {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: none;
-            font-size: 16px;
-        }
-        input {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            outline: none;
-        }
-        button {
-            background: linear-gradient(90deg, #0078ff, #00d4ff);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        button:disabled {
-            background: #555;
-            cursor: not-allowed;
+            letter-spacing: 1px;
         }
         .status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .connected {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .disconnected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+        button:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        .log {
             margin-top: 20px;
-            color: #aaa;
-        }
-        .hidden {
-            display: none;
-        }
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #fff;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>EA 游戏登录助手</h1>
-        <div id="status" class="status">正在初始化...</div>
+        <h1>游戏登录助手</h1>
+        
+        <div class="status disconnected" id="status">正在连接服务器...</div>
 
-        <!-- 排队/等待状态 -->
-        <div id="queueBox">
-            <p>当前系统正在处理上一个请求，请稍候...</p>
+        <div class="input-group">
+            <input type="email" id="emailInput" placeholder="请输入邮箱地址">
+            <button onclick="sendEmail()" id="emailBtn" disabled>提交邮箱</button>
         </div>
 
-        <!-- 邮箱输入界面 -->
-        <div id="mailBox" class="hidden">
-            <input type="email" id="email" placeholder="输入邮箱" autocomplete="off">
-            <button onclick="sendEmail()">提交邮箱</button>
+        <div class="input-group">
+            <input type="text" id="codeInput" placeholder="请输入验证码">
+            <button onclick="sendCode()" id="codeBtn" disabled>提交验证码</button>
         </div>
 
-        <!-- 验证码输入界面 -->
-        <div id="codeBox" class="hidden">
-            <input type="text" id="code" placeholder="输入验证码" autocomplete="off">
-            <button onclick="sendCode()">提交验证码</button>
-        </div>
-
-        <!-- 脚本运行中界面 -->
-        <div id="runningBox" class="hidden">
-            <p><span class="spinner"></span>请等待程序正在运行...</p>
-        </div>
-
-        <!-- 完成界面 -->
-        <div id="doneBox" class="hidden">
-            <p>✅ 已运行完成，可以上号了！</p>
-        </div>
+        <div class="log" id="log"></div>
     </div>
 
     <script>
-        // ========== 配置项 =======// 你的穿透地址
+        // 已配置好你的 ngrok 地址
         const WS_URL = "wss://draw-residence-scrutiny.ngrok-free.dev";
-        const LOCK_KEY = "ea_login_lock";
-        const LOCK_DURATION = 300000; // 单用户锁定时长（5分钟）
-        // ==========================
+        let ws;
+        const logEl = document.getElementById("log");
 
-        const ws = new WebSocket(WS_URL);
-        let lockInterval = null;
-        let isLocked = false;
-
-        // 状态切换函数
-        function showOnly(boxId) {
-            ['queueBox', 'mailBox', 'codeBox', 'runningBox', 'doneBox'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-            document.getElementById(boxId).classList.remove('hidden');
+        // 日志打印
+        function addLog(text) {
+            const time = new Date().toLocaleTimeString();
+            logEl.innerHTML += `[${time}] ${text}<br>`;
+            logEl.scrollTop = logEl.scrollHeight;
         }
 
-        // 初始化锁定状态
-        function checkLock() {
-            const lockTime = localStorage.getItem(LOCK_KEY);
-            if (lockTime && Date.now() - parseInt(lockTime) < LOCK_DURATION) {
-                isLocked = true;
-                showOnly('queueBox');
-                document.getElementById("status").textContent = "⚠️ 系统繁忙，请稍后再试";
-                return false;
-            }
-            return true;
+        // 更新连接状态
+        function updateStatus(text, isConnected) {
+            const statusEl = document.getElementById("status");
+            statusEl.textContent = text;
+            statusEl.className = `status ${isConnected ? 'connected' : 'disconnected'}`;
+            document.getElementById("emailBtn").disabled = !isConnected;
+            document.getElementById("codeBtn").disabled = !isConnected;
         }
 
-        // 加锁
-        function acquireLock() {
-            localStorage.setItem(LOCK_KEY, Date.now().toString());
-            isLocked = true;
-        }
+        // 建立 WebSocket 连接
+        function connect() {
+            updateStatus("正在连接服务器...", false);
+            addLog("尝试连接到服务器...");
+            ws = new WebSocket(WS_URL);
 
-        // 解锁
-        function releaseLock() {
-            localStorage.removeItem(LOCK_KEY);
-            isLocked = false;
-        }
+            // 连接成功
+            ws.onopen = () => {
+                addLog("✅ 已成功连接到服务器");
+                updateStatus("✅ 已连接到服务器", true);
+            };
 
-        // 连接状态处理
-        ws.onopen = function() {
-            document.getElementById("status").textContent = "✅ 已连接，可正常使用";
-            if (checkLock()) {
-                showOnly('mailBox');
-            }
-        };
+            // 收到服务端消息
+            ws.onmessage = (event) => {
+                addLog(`📥 收到服务端消息: ${event.data}`);
+                const res = JSON.parse(event.data);
+                alert(`提交成功: ${res.msg}`);
+            };
 
-        ws.onerror = function() {
-            document.getElementById("status").textContent = "❌ 连接出错，请检查服务和穿透";
-            showOnly('queueBox');
-        };
+            // 连接断开，自动重连
+            ws.onclose = () => {
+                addLog("🔌 连接断开，2秒后自动重连...");
+                updateStatus("连接断开，正在重连...", false);
+                setTimeout(connect, 2000);
+            };
 
-        ws.onclose = function() {
-            document.getElementById("status").textContent = "⚠️ 连接已断开，请刷新页面";
-            showOnly('queueBox');
-        };
-
-        // 提交邮箱
-        function sendEmail() {
-            const email = document.getElementById("email").value.trim();
-            if (!email) return alert("请输入邮箱");
-            if (isLocked) return;
-
-            // 加锁，防止其他用户进入
-            acquireLock();
-
-            // 发送邮箱到服务端
-            ws.send(JSON.stringify({ type: "email", data: email }));
-
-            // 切换到等待状态，直到服务端确认邮箱已处理
-            document.getElementById("status").textContent = "⏳ 请等待电脑端处理邮箱...";
-            showOnly('queueBox');
-
-            // 监听服务端返回的邮箱处理完成信号
-            ws.onmessage = function(event) {
-                const data = JSON.parse(event.data);
-                if (data.action === "email_done") {
-                    document.getElementById("status").textContent = "✅ 邮箱已处理，请输入验证码";
-                    showOnly('codeBox');
-                } else if (data.action === "script_done") {
-                    // 脚本运行完成
-                    document.getElementById("status").textContent = "✅ 程序运行完成";
-                    showOnly('doneBox');
-                    setTimeout(() => {
-                        releaseLock();
-                        window.location.reload(); // 3秒后刷新页面，放下一个用户
-                    }, 3000);
-                }
+            // 连接错误
+            ws.onerror = (error) => {
+                addLog(`❌ 连接错误: ${error}`);
+                updateStatus("连接错误，请检查 ngrok 地址", false);
             };
         }
 
-        // 提交验证码
-        function sendCode() {
-            const code = document.getElementById("code").value.trim();
-            if (!code) return alert("请输入验证码");
+        // 发送邮箱
+        function sendEmail() {
+            const email = document.getElementById("emailInput").value.trim();
+            if (!email) {
+                alert("请输入邮箱地址！");
+                return;
+            }
 
-            // 发送验证码到服务端
-            ws.send(JSON.stringify({ type: "code", data: code }));
-
-            // 切换到脚本运行状态
-            document.getElementById("status").textContent = "⏳ 请等待程序正在运行...";
-            showOnly('runningBox');
-
-            // 服务端收到验证码后，执行发包脚本，然后发送 "script_done" 信号
-            // 服务端脚本会在发包完成后，向网页发送这个信号，网页收到后自动解锁刷新
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const message = JSON.stringify({
+                    type: "email",
+                    content: email
+                });
+                ws.send(message);
+                addLog(`📤 已发送邮箱: ${email}`);
+                alert("邮箱已发送，请查看电脑终端");
+                document.getElementById("emailInput").value = "";
+            } else {
+                alert("未连接到服务器，请稍后再试");
+            }
         }
 
-        // 页面关闭/刷新时自动解锁（防止死锁）
-        window.addEventListener('beforeunload', () => {
-            if (isLocked) releaseLock();
-        });
+        // 发送验证码
+        function sendCode() {
+            const code = document.getElementById("codeInput").value.trim();
+            if (!code) {
+                alert("请输入验证码！");
+                return;
+            }
+
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const message = JSON.stringify({
+                    type: "code",
+                    content: code
+                });
+                ws.send(message);
+                addLog(`📤 已发送验证码: ${code}`);
+                alert("验证码已发送，请查看电脑终端");
+                document.getElementById("codeInput").value = "";
+            } else {
+                alert("未连接到服务器，请稍后再试");
+            }
+        }
+
+        // 页面加载时自动连接
+        window.onload = connect;
     </script>
 </body>
 </html>
