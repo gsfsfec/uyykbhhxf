@@ -142,98 +142,147 @@
 
         <div class="log" id="log"></div>
     </div>
-    <script>
-        const WS_URL = "wss://draw-residence-scrutiny.ngrok-free.dev";
-        let ws;
-        let emailSubmitted = false;
-        let codeSubmitted = false;
-        let timer = null;
-        let timeLeft = 300;
-
-        function updateStatus(text, cls, enable) {
-            document.getElementById("status").innerText = text;
-            document.getElementById("status").className = "status " + cls;
-            document.getElementById("emailBtn").disabled = !enable || emailSubmitted;
-            document.getElementById("codeBtn").disabled = !enable || codeSubmitted;
-            document.getElementById("emailInput").disabled = emailSubmitted || !enable;
-            document.getElementById("codeInput").disabled = codeSubmitted || !enable;
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏登录助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
         }
-
-        function updateLog(text) {
-            document.getElementById("log").innerText = text;
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-
-        function startTimer() {
-            clearInterval(timer);
-            timeLeft = 300;
-            timer = setInterval(() => {
-                timeLeft--;
-                let m = Math.floor(timeLeft / 60);
-                let s = timeLeft % 60;
-                document.getElementById("timer").innerText = `⏱ 剩余时间：${m}分${s}秒`;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    updateStatus("时间已到，请重新排队", "waiting", false);
-                    updateLog("⏳ 5分钟使用时间结束");
-                }
-            }, 1000);
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-
-        function connect() {
-            updateStatus("正在连接服务器...", "disconnected", false);
-            ws = new WebSocket(WS_URL);
-
-            ws.onopen = () => {
-                updateStatus("已连接，等待分配...", "waiting", false);
-            };
-
-            ws.onmessage = (e) => {
-                let data = JSON.parse(e.data);
-                if (data.status === "ok") {
-                    updateStatus("✅ 你正在使用（限时5分钟）", "connected", true);
-                    startTimer();
-                } else if (data.status === "waiting") {
-                    updateStatus(`⌛ 排队中 | 你前面有 ${data.queue || 1} 人`, "waiting", false);
-                    updateLog("请等待上一位用户使用完毕");
-                }
-            };
-
-            ws.onclose = () => {
-                clearInterval(timer);
-                updateStatus("连接已断开，请刷新页面重新排队", "disconnected", false);
-                updateLog("🔌 连接已断开");
-            };
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
-
-        function sendEmail() {
-            let email = document.getElementById("emailInput").value.trim();
-            if (!email) return;
-            ws.send(JSON.stringify({ type: "email", content: email }));
-            emailSubmitted = true;
-            document.getElementById("emailBtn").innerText = "已提交";
-            updateLog("✅ 邮箱已发送，注意查收验证码");
+        .status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: 500;
         }
-
-        function editEmail() {
-            emailSubmitted = false;
-            document.getElementById("emailBtn").innerText = "提交邮箱";
+        .connected {
+            background: rgba(16,185,129,0.2);
+            color: #10b981;
+            border: 1px solid rgba(16,185,129,0.3);
         }
-
-        function sendCode() {
-            let code = document.getElementById("codeInput").value.trim();
-            if (!code) return;
-            ws.send(JSON.stringify({ type: "code", content: code }));
-            codeSubmitted = true;
-            document.getElementById("codeBtn").innerText = "已提交";
-            updateLog("✅ 验证码已接收，请十分钟后上游戏");
+        .waiting {
+            background: rgba(251,191,36,0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251,191,36,0.3);
         }
-
-        function editCode() {
-            codeSubmitted = false;
-            document.getElementById("codeBtn").innerText = "提交验证码";
+        .disconnected {
+            background: rgba(239,68,68,0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239,68,68,0.3);
         }
+        .timer {
+            text-align: center;
+            color: #fff;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+        .hint {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+        }
+        input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        button {
+            padding: 15px;
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.5);
+        }
+        .btn-modify {
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.1);
+        }
+        .log {
+            margin-top: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>游戏登录助手</h1>
+        <div class="status disconnected" id="status">正在连接...</div>
+        <div class="timer" id="timer"></div>
+        <div class="hint">💡 请输入正确邮箱并确认后再发送</div>
 
-        window.onload = connect;
-    </script>
-</body>
-</html>
+        <div class="input-group">
+            <div class="input-wrapper">
+                <input type="email" id="emailInput" placeholder="邮箱">
+                <button class="btn-modify" onclick="editEmail()">修改</button>
+            </div>
+            <button onclick="sendEmail()" id="emailBtn" disabled>提交邮箱</button>
+        </div>
+
+        <div class="input-group">
+            <div class="input-wrapper">
+                <input type="text" id="codeInput" placeholder="验证码">
+                <button class="btn-modify" onclick="editCode()">修改</button>
+            </div>
+            <button onclick="sendCode()" id="codeBtn" disabled>提交验证码</button>
+        </div>
+
+        <div class="log" id="log"></div>
+    </div>
