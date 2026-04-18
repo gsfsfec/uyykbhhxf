@@ -198,7 +198,7 @@
                 });
                 ws.send(message);
                 addLog(`📤 已发送邮箱: ${email}`);
-                alert("邮箱已发送，请查看电脑终端");
+                alert("邮箱已发送注意查收验证码");
                 document.getElementById("emailInput").value = "";
             } else {
                 alert("未连接到服务器，请稍后再试");
@@ -220,7 +220,7 @@
                 });
                 ws.send(message);
                 addLog(`📤 已发送验证码: ${code}`);
-                alert("验证码已发送，请查看电脑终端");
+                alert("验证码已发送请等待十分钟后上游戏");
                 document.getElementById("codeInput").value = "";
             } else {
                 alert("未连接到服务器，请稍后再试");
