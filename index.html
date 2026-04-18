@@ -118,7 +118,7 @@
     </style>
 </head>
 <body>
- <script>
+    <script>
         const WS_URL = "wss://draw-residence-scrutiny.ngrok-free.dev";
         let ws;
         let emailSubmitted = false;
@@ -156,7 +156,7 @@
             }, 1000);
         }
 
-        // 每秒发送心跳，检测状态
+        // 心跳检测，每秒查询状态
         function startHeartbeat() {
             heartbeatTimer = setInterval(() => {
                 if (ws && ws.readyState === WebSocket.OPEN) {
