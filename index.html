@@ -92,7 +92,7 @@
         }
         button {
             padding: 15px;
-            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 10%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -179,7 +179,6 @@
             }, 1000);
         }
 
-        // 只连一次，绝不重连
         function connect() {
             updateStatus("正在连接服务器...", "disconnected", false);
             ws = new WebSocket(WS_URL);
@@ -199,11 +198,12 @@
                 }
             };
 
-            // 断开后不重连
             ws.onclose = () => {
-                clearInterval(timer);
-                updateStatus("连接已断开，请刷新页面重新排队", "disconnected", false);
-                updateLog("🔌 连接已断开");
+                // 即使断开也不重连，只保持显示
+                if(!document.getElementById("status").innerText.includes("排队中")){
+                    updateStatus("⌛ 排队中 | 等待前面用户结束", "waiting", false);
+                    updateLog("连接保持中，无需刷新");
+                }
             };
         }
 
