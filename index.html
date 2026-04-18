@@ -149,7 +149,6 @@
 
         <div class="log" id="log"></div>
     </div>
-
     <script>
         const WS_URL = "wss://draw-residence-scrutiny.ngrok-free.dev";
         let ws;
@@ -207,13 +206,15 @@
             }
         }
 
-        // 修改邮箱 → 修复完成
+        // 修改邮箱
         function editEmail() {
             emailSubmitted = false;
             document.getElementById("emailInput").disabled = false;
             document.getElementById("emailBtn").textContent = "提交邮箱";
             updateStatus("✅ 已连接到服务器", "connected", true);
-            // 提交验证码
+        }
+
+        // 提交验证码
         function sendCode() {
             const code = document.getElementById("codeInput").value.trim();
             if (!code) return;
@@ -227,7 +228,7 @@
             }
         }
 
-        // 修改验证码 → 修复完成
+        // 修改验证码
         function editCode() {
             codeSubmitted = false;
             document.getElementById("codeInput").disabled = false;
