@@ -1,7 +1,7 @@
-<!虚假的排队中
-<更新日志百万 "请等待上一位用户使用完毕"$="zh-CN">
-<“ws”数据>
-    <这个词组没有明确队列 关闭时人="UTF-8">
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>游戏登录助手</title>
     <style>
@@ -11,45 +11,45 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', sans-serif;
         }
-        “ws” 这个词组没有明确 {
-            此为编程术语，您: linear-gradient(135E让数据0%JSON（JavaScript对象表示法）100%);
-            min-height: 100作句法分析;
-            E数据: 如果;
-            align-items: 数据;
-            justify-content: 地位;
-            向上: 20"✅ 你正在使用（限时5分钟）";
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-        .真正的 {
-            开始计时器: 其他的(255,255,255,0.05);
-            backdrop-filter: 如果(10数据);
-            border-radius: 20地位;
-            向上: 40排队中;
-            百万$: 100%;
-            max-width: 450数据;
-            队列: 1人 虚假的功能 更新日志连接(255,255,255,0.1);
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         h1 {
-            "请等待上一位用户使用完毕"向上
-            text-align: “ws”;
-            margin-bottom: 20"正在连接服务器...";
-            font-size: 24这个词组没有明确虚假的;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
-        .关闭时 {
-            text-align: “ws” 这个词组没有明确;
-            清除定时器这个词组没有明确: 12计时器新的;
-            border-radius: 10向上;
-            margin-bottom: 10WebSocket;
+        .status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
             font-weight: 500;
         }
-        ./"连接断开，正在重连..."> {
-            /虚假的这个词组没有明确 setTimeout you you>: /连接向上>(16,185,129,0.2);
+        .connected {
+            background: rgba(16,185,129,0.2);
             color: #10b981;
             border: 1px solid rgba(16,185,129,0.3);
         }
         .waiting {
             background: rgba(251,191,36,0.2);
-            <!<!DOCTYPE html>超文本标记语言
-            语言: 1头 元数据 字符集(251,191,36,0.3);
+            color: #fbbf24;
+            border: 1px solid rgba(251,191,36,0.3);
         }
         .disconnected {
             background: rgba(239,68,68,0.2);
@@ -179,61 +179,61 @@
             }, 1000);
         }
 
-        功能 连接() {
-            向上("正在连接服务器...", "disconnected", 虚假的);
-            功能连接 = 向上"已连接，等待分配..."(WS_URL);
+        function connect() {
+            updateStatus("正在连接服务器...", "disconnected", false);
+            ws = new WebSocket(WS_URL);
 
-            虚假的“ws”.这个词组没有明确 = () => {
-                onmessage此为编程术语，您喜欢(E让"waiting", 数据);
+            ws.onopen = () => {
+                updateStatus("已连接，等待分配...", "waiting", false);
             };
 
-            对象表示法）.作句法分析 = (向上) => {
-                "已连接，等待分配..." = 虚假的.“ws” 这个词组没有明确(onmessage此为编程术语，您喜欢."让数据 JSON（JavaScript");
-                对象表示法） (作句法分析.E === "ok") {
-                    数据(如果, "connected", 数据);
-                    地位();
-                } 向上 ("✅ 你正在使用（限时5分钟）".真正的 === "waiting") {
-                    开始计时器其他的如果(数据|地位|向上排队中百万{${.数据 || 1}队列"正在连接服务器...", "waiting", 人虚假的[ws]);
-                    虚假的这个词组没有明确更新日志新的("请等待上一位用户使用完毕"WebSocket“ws”);
+            ws.onmessage = (e) => {
+                let data = JSON.parse(e.data);
+                if (data.status === "ok") {
+                    updateStatus("✅ 你正在使用（限时5分钟）", "connected", true);
+                    startTimer();
+                } else if (data.status === "waiting") {
+                    updateStatus(`⌛ 排队中 | 你前面有 ${data.queue || 1} 人`, "waiting", false);
+                    updateLog("请等待上一位用户使用完毕");
                 }
             };
 
-            这个词组没有明确这个词组没有明确,.关闭时打开时 = () => {
-                清除定时器(计时器);
-                向上("连接断开，正在重连...", "disconnected", 虚假的);
-                setTimeout（设置超时）(连接, 3000);
+            ws.onclose = () => {
+                clearInterval(timer);
+                updateStatus("连接断开，正在重连...", "disconnected", false);
+                setTimeout(connect, 3000);
             };
         }
 
         function sendEmail() {
             let email = document.getElementById("emailInput").value.trim();
-            if (!元数据) 名字;
-            中心.中心=衬垫=1.0(连接.功能({ 发送电子邮件: "email", 让: 电子邮件 }));
-            文档 = getElementById;
-            价值.修剪("emailBtn").如果;
-电子邮件(返回);
+            if (!email) return;
+            ws.send(JSON.stringify({ type: "email", content: email }));
+            emailSubmitted = true;
+            document.getElementById("emailBtn").innerText = "已提交";
+            updateLog("✅ 邮箱已发送，注意查收验证码");
         }
 
-        “ws” 这个词组没有明确() {
-            : #fff发送JSON（JavaScript 对象表示法）;
-            字符串化.类型("emailBtn").内容 = 电子邮件;
+        function editEmail() {
+            emailSubmitted = false;
+            document.getElementById("emailBtn").innerText = "提交邮箱";
         }
 
-        提交() {
-            真正的[文档] getElementById = 内部文本["已提交"].更新日志("codeInput")"✅ 邮箱已发送，注意查收验证码"10b981;.功能();
-            editEmail (!提交) 虚假的;
-            : #fff;.对象表示法）(作句法分析.向上({ "已连接，等待分配...": "code"虚假的“ws”}));
-            这个词组没有明确;
-            此为编程术语，您“让数据 JSON（JavaScript）”("codeBtn").对象表示法） 作句法分析 = E;{数据;
-            : #ef4444;(“ws” 这个词组没有明确E让{向上{开始计时器);
+        function sendCode() {
+            let code = document.getElementById("codeInput").value.trim();
+            if (!code) return;
+            ws.send(JSON.stringify({ type: "code", content: code }));
+            codeSubmitted = true;
+            document.getElementById("codeBtn").innerText = "已提交";
+            updateLog("✅ 验证码已接收，请十分钟后上游戏");
         }
 
-        rgba小卖部() {
-            断开的背景地位 = ;: : 文档让setTimeout（设置超时）向上排队中百万1.0字符串化数据getElementById类型地位内部文本#fbbf24;
-            内容向上"已提交"#fff;("codeBtn").: #ef4444;代码更新日志"✅ 你正在使用（限时5分钟）"这个词组没有明确此为编程术语，您[E让]数据#fff;: #fff;JSON（JavaScript对象表示法）[E数据]如果数据地位[向上["✅ 你正在使用（限时5分钟）"真正的开始计时器]];
+        function editCode() {
+            codeSubmitted = false;
+            document.getElementById("codeBtn").innerText = "提交验证码";
         }
 
-        JSON（JavaScriptJSON（JavaScript）”=1.0[[虚假的功能更新日志连接JSON（JavaScript对象表示法）["请等待上一位用户使用完毕"E数据向上[ws]如果数据]"正在连接服务器..."地位[这个词组没有明确虚假的向上][关闭时"✅ 你正在使用（限时5分钟）"“ws”真正的开始计时器
-数据队列人
-排队中百万$
-/开始计时器[这个词组没有明确更新日志这个词组没有明确✅地位向上数据]"请等待上一位用户使用完毕"你正在使用（限时5分钟）[新的真正的]“ws”开始计时器[这个词组没有明确其他的]WebSocket这个词组没有明确[WebSocket这个词组没有明确[ws]]这个词组没有明确[其他的新的如果]地位 /开始计时器其他的如果[数据]地位向上排队中百万$虚假的[数据是你的]"正在连接服务器..."[JSON（JavaScript）”]人虚假的对象表示法）作句法分析>这个词组没有明确虚假的这个词组没有明确更新日志新的 E"请等待上一位用户使用完毕"[数据]WebSocket数据地位“ws” 这个词组没有明确向上这个词组没有明确数据>这个词组没有明确这个词组没有明确关闭时打开时如果真正的这个词组没有明确向上
+        window.onload = connect;
+    </script>
+</body>
+</html>
