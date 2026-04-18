@@ -5,119 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>游戏登录助手</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .container {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            width: 100%;
-            max-width: 450px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        h1 {
-            color: #fff;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .status {
-            text-align: center;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-        .connected {
-            background: rgba(16,185,129,0.2);
-            color: #10b981;
-            border: 1px solid rgba(16,185,129,0.3);
-        }
-        .waiting {
-            background: rgba(251,191,36,0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(251,191,36,0.3);
-        }
-        .disconnected {
-            background: rgba(239,68,68,0.2);
-            color: #ef4444;
-            border: 1px solid rgba(239,68,68,0.3);
-        }
-        .timer {
-            text-align: center;
-            color: #fff;
-            font-size: 15px;
-            margin-bottom: 15px;
-        }
-        .hint {
-            color: rgba(255,255,255,0.6);
-            font-size: 13px;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        .input-group {
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .input-wrapper {
-            display: flex;
-            gap: 10px;
-        }
-        input {
-            flex: 1;
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 16px;
-        }
-        input::placeholder {
-            color: rgba(255,255,255,0.5);
-        }
-        button {
-            padding: 15px;
-            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:disabled {
-            background: rgba(255,255,255,0.2);
-            color: rgba(255,255,255,0.5);
-        }
-        .btn-modify {
-            padding: 15px 20px;
-            background: rgba(255,255,255,0.1);
-        }
-        .log {
-            margin-top: 20px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            padding: 15px;
-            color: rgba(255,255,255,0.8);
-            text-align: center;
-        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+        body{background:linear-gradient(135deg,#1a1a2e,#16213e);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+        .container{background:rgba(255,255,255,.05);backdrop-filter:blur(10px);border-radius:20px;padding:40px;width:100%;max-width:450px;border:1px solid rgba(255,255,255,.1)}
+        h1{color:#fff;text-align:center;margin-bottom:20px;font-size:24px}
+        .status{text-align:center;padding:12px;border-radius:10px;margin-bottom:10px;font-weight:500}
+        .connected{background:rgba(16,185,129,.2);color:#10b981;border:1px solid rgba(16,185,129,.3)}
+        .waiting{background:rgba(251,191,36,.2);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
+        .disconnected{background:rgba(239,68,68,.2);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+        .timer{text-align:center;color:#fff;font-size:15px;margin-bottom:15px}
+        .hint{color:rgba(255,255,255,.6);font-size:13px;text-align:center;margin-bottom:15px}
+        .input-group{margin-bottom:20px;display:flex;flex-direction:column;gap:8px}
+        .input-wrapper{display:flex;gap:10px}
+        input{flex:1;padding:15px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:16px}
+        input::placeholder{color:rgba(255,255,255,.5)}
+        button{padding:15px;background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer}
+        button:disabled{background:rgba(255,255,255,.2);color:rgba(255,255,255,.5)}
+        .btn-modify{padding:15px 20px;background:rgba(255,255,255,.1)}
+        .log{margin-top:20px;background:rgba(0,0,0,.3);border-radius:10px;padding:15px;color:rgba(255,255,255,.8);text-align:center}
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>游戏登录助手</h1>
+        <div class="status disconnected" id="status">正在连接...</div>
+        <div class="timer" id="timer"></div>
+        <div class="hint">💡 请输入正确邮箱并确认后再发送</div>
+
+        <div class="input-group">
+            <div class="input-wrapper">
+                <input type="email" id="emailInput" placeholder="邮箱">
+                <button class="btn-modify" onclick="editEmail()">修改</button>
+            </div>
+            <button onclick="sendEmail()" id="emailBtn" disabled>提交邮箱</button>
+        </div>
+
+        <div class="input-group">
+            <div class="input-wrapper">
+                <input type="text" id="codeInput" placeholder="验证码">
+                <button class="btn-modify" onclick="editCode()">修改</button>
+            </div>
+            <button onclick="sendCode()" id="codeBtn" disabled>提交验证码</button>
+        </div>
+
+        <div class="log" id="log"></div>
+    </div>
     <script>
         const WS_URL = "wss://draw-residence-scrutiny.ngrok-free.dev";
         let ws;
@@ -156,11 +88,10 @@
             }, 1000);
         }
 
-        // 心跳检测，每秒查询状态
         function startHeartbeat() {
             heartbeatTimer = setInterval(() => {
                 if (ws && ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({"type": "heartbeat"}));
+                    ws.send(JSON.stringify({ "type": "heartbeat" }));
                 }
             }, 1000);
         }
