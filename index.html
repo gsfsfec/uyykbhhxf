@@ -46,13 +46,16 @@ button:disabled{background:#444;color:#999;cursor:not-allowed}
 <input type="number" id="cardCount" value="999999" min="1" max="1000000" placeholder="输入刷卡数量">
 <button id="btn2" onclick="shuaKaPai()">刷全卡</button>
 
-<button id="btn3" onclick="tuichu()">终止发包</button>
+<button id="btn3" onclick="tuichu()">退出</button>
 
 <div id="log" class="log"></div>
 </div>
 
 <script>
-let isRunning = false; // 全局运行锁
+// 已填入你的 Worker 地址
+const WORKER_URL = "https://damp-heart-c1a7.3822035620.workers.dev/?url=";
+
+let isRunning = false;
 
 function log(msg, type) {
   const el = document.getElementById('log');
@@ -62,18 +65,21 @@ function log(msg, type) {
   el.scrollTop = el.scrollHeight;
 }
 
-// 禁用所有按钮
 function disableAll() {
   document.getElementById('btn1').disabled = true;
   document.getElementById('btn2').disabled = true;
   document.getElementById('btn3').disabled = true;
 }
 
-// 恢复所有按钮
 function enableAll() {
   document.getElementById('btn1').disabled = false;
   document.getElementById('btn2').disabled = false;
   document.getElementById('btn3').disabled = false;
+}
+
+async function fetchThroughWorker(targetUrl, options) {
+  const proxyUrl = WORKER_URL + encodeURIComponent(targetUrl);
+  return fetch(proxyUrl, options);
 }
 
 // 刷钻石
@@ -106,13 +112,13 @@ async function shuaZuanShi() {
     try {
       const utc = Date.now();
       const headers = { ...headersBase, 'X-Pvzh-UTC': utc };
-      await fetch(`https://pvz-heroes.awspopcap.com/updateDailyLoginProgress?userId=${pid}`, {
+      await fetchThroughWorker(`https://pvz-heroes.awspopcap.com/updateDailyLoginProgress?userId=${pid}`, {
         method: 'POST', headers,
         body: '{"day":1,"forStreak":true,"currentStreakSetCompleted":false}'
       });
       await new Promise(r=>setTimeout(r,300));
 
-      const res = await fetch(`https://pvz-heroes.awspopcap.com/pvp/v1/leagueRewards/sync?playerId=${pid}`, {
+      const res = await fetchThroughWorker(`https://pvz-heroes.awspopcap.com/pvp/v1/leagueRewards/sync?playerId=${pid}`, {
         method: 'POST', headers,
         body: '{"tickets":0,"gems":10000,"sparks":0,"packs":[],"specificCards":[]}'
       });
@@ -126,7 +132,6 @@ async function shuaZuanShi() {
   log('✅ 钻石任务全部完成', 'success');
   isRunning = false; enableAll();
 }
-
 // 刷全卡
 async function shuaKaPai() {
   if (isRunning) return;
@@ -162,7 +167,7 @@ async function shuaKaPai() {
   };
 
   try {
-    const res = await fetch('https://pvz-heroes.awspopcap.com/persistence/v2/inventory/commitSoftPurchase', {
+    const res = await fetchThroughWorker('https://pvz-heroes.awspopcap.com/persistence/v2/inventory/commitSoftPurchase', {
       method: 'POST', headers, body: payload
     });
     log(`刷全卡完成 → 状态：${res.status}`, res.ok?'success':'error');
