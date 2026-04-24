@@ -1,1 +1,63 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PVZ-CX 网页发包版（pvz-h-tools代理）</title><style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif}body{background:#1a1a1e;color:#e0e0e0;padding:20px;max-width:600px;margin:0 auto}.box{background:#24242c;border-radius:10px;padding:15px;margin:10px 0}.title{color:#ffd700;text-align:center;margin:10px 0;font-size:18px}.line{height:1px;background:#b366ff;margin:10px 0}input{width:100%;padding:10px;margin:8px 0;border-radius:6px;border:none;background:#333;color:#fff}button{width:100%;padding:12px;margin:8px 0;border:none;border-radius:6px;background:#7c3aed;color:#fff;font-weight:bold;cursor:pointer}button:disabled{background:#444;color:#999;cursor:not-allowed}.tip{color:#0fdf8f;font-size:14px;margin-bottom:8px}.log{background:#111;padding:10px;border-radius:6px;margin-top:10px;font-size:12px;line-height:1.4;color:#ccc}.success{color:#0f0}.error{color:#f33}</style></head><body><div class="box"><div class="title">远程公告</div><div class="line"></div><div>PVZ-CX工具 - 作者朵朵</div><div>仅供学习交流，请勿倒卖</div><div class="line"></div></div><div class="box"><div class="title">账号配置</div><input type="text" id="token" placeholder="EADP-AUTH-TOKEN"><input type="text" id="pid" placeholder="EADP-PERSONA-ID"></div><div class="box"><div class="title">功能菜单</div><div class="tip">💎 刷钻石：1次 = 10000钻石</div><input type="number" id="repeat" value="1" min="1" placeholder="输入刷钻石次数"><button id="btn1" onclick="shuaZuanShi()">开始刷钻石</button><div class="tip">🃏 刷卡数量：上限 1000000</div><input type="number" id="cardCount" value="999999" min="1" max="1000000" placeholder="输入刷卡数量"><button id="btn2" onclick="shuaKaPai()">刷全卡</button><button id="btn3" onclick="tuichu()">退出</button><div id="log" class="log"></div></div><script>const PROXY="https://pvz-h-tools.onrender.com/api/proxy?url=";let isRunning=false;function log(m,t){const e=document.getElementById("log"),n=new Date().toLocaleTimeString(),i="success"===t?"success":"error"===t?"error":"";e.innerHTML+=`[${n}] <span class="${i}">${m}</span><br>`,e.scrollTop=e.scrollHeight}function disableAll(){document.getElementById("btn1").disabled=!0,document.getElementById("btn2").disabled=!0,document.getElementById("btn3").disabled=!0}function enableAll(){document.getElementById("btn1").disabled=!1,document.getElementById("btn2").disabled=!1,document.getElementById("btn3").disabled=!1}async function req(u,o){return fetch(PROXY+encodeURIComponent(u),o)}async function shuaZuanShi(){if(isRunning)return;isRunning=!0,disableAll();const t=document.getElementById("token").value.trim(),p=document.getElementById("pid").value.trim(),r=parseInt(document.getElementById("repeat").value)||1;if(!t||!p)return void log("请填写TOKEN和PersonaID","error");if(r<1)return void(r=1);log(`开始刷钻石 → 共${r}次，1次=1万钻石`);const h={"Content-Type":"application/json","EADP-AUTH-TOKEN":t,"EADP-PERSONA-ID":p,"X-EADP-Client-Id":"pvzheroes-2015-google-client","X-Pvzh-Platform":"Android","X-Pvzh-Content-Version":"45a337051e72592e53c9bf8a4b590639","X-Pvzh-Client-Version":"1.64.6"};for(let s=1;s<=r;s++)try{const l=Date.now();h["X-Pvzh-UTC"]=l;await req(`https://pvz-heroes.awspopcap.com/updateDailyLoginProgress?userId=${p}`,{method:"POST",headers:h,body:'{"day":1,"forStreak":true,"currentStreakSetCompleted":false}'}),await new Promise(e=>setTimeout(e,300));const c=await req(`https://pvz-heroes.awspopcap.com/pvp/v1/leagueRewards/sync?playerId=${p}`,{method:"POST",headers:h,body:'{"tickets":0,"gems":10000,"sparks":0,"packs":[],"specificCards":[]}'});log(`第${s}次完成 → 状态：${c.status}`),await new Promise(e=>setTimeout(e,300))catch(e){log(`第${s}次失败：${e.message}`,"error")}log("✅ 钻石任务全部完成","success"),isRunning=!1,enableAll()}async function shuaKaPai(){if(isRunning)return;isRunning=!0,disableAll();const t=document.getElementById("token").value.trim(),p=document.getElementById("pid").value.trim(),r=parseInt(document.getElementById("cardCount").value)||999999;if(!t||!p)return void log("请填写TOKEN和PersonaID","error");if(r<1)return void(r=1);if(r>1e6)return void(r=1e6);log(`开始刷全卡 → 数量：${r}`);const s={"1":r,"2":r,"3":r,"4":r,"6":r,"8":r,"15":r,"18":r,"21":r,"24":r,"29":r,"31":r,"32":r,"33":r,"39":r,"43":r,"46":r,"49":r,"53":r,"54":r,"57":r,"58":r,"59":r,"61":r,"64":r,"65":r,"66":r,"70":r,"71":r,"76":r,"78":r,"79":r,"80":r,"81":r,"82":r,"83":r,"84":r,"87":r,"88":r,"90":r,"91":r,"94":r,"95":r,"97":r,"98":r,"99":r,"101":r,"102":r,"103":r,"104":r,"105":r,"106":r,"108":r,"109":r,"110":r,"111":r,"115":r,"116":r,"117":r,"118":r,"119":r,"120":r,"122":r,"123":r,"124":r,"125":r,"126":r,"127":r,"128":r,"129":r,"130":r,"132":r,"134":r,"138":r,"139":r,"140":r,"141":r,"142":r,"143":r,"145":r,"148":r,"150":r,"151":r,"152":r,"153":r,"154":r,"156":r,"157":r,"158":r,"159":r,"160":r,"161":r,"163":r,"164":r,"165":r,"167":r,"169":r,"170":r,"171":r,"174":r,"175":r,"176":r,"178":r,"180":r,"181":r,"182":r,"186":r,"187":r,"190":r,"191":r,"193":r,"194":r,"195":r,"196":r,"197":r,"198":r,"199":r,"201":r,"202":r,"203":r,"204":r,"206":r,"207":r,"209":r,"213":r};const h={"Content-Type":"application/json","EADP-AUTH-TOKEN":t,"EADP-PERSONA-ID":p,"X-EADP-Client-Id":"pvzheroes-2015-google-client","X-Pvzh-Platform":"Android","X-Pvzh-Content-Version":"45a337051e72592e53c9bf8a4b590639","X-Pvzh-Client-Version":"1.64.6","X-Pvzh-UTC":Date.now()};try{const c=await req("https://pvz-heroes.awspopcap.com/persistence/v2/inventory/commitSoftPurchase",{method:"POST",headers:h,body:JSON.stringify({Sku:"deckRecipe",EventId:null,Cards:s,ExpectedCost:10,KeyName:"default"})});log(`刷全卡完成 → 状态：${c.status}`,c.ok?"success":"error")}catch(e){log("刷全卡失败："+e.message,"error")}isRunning=!1,enableAll()}function tuichu(){log("已退出，按钮已解锁","success"),isRunning=!1,enableAll()}</script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>游戏登录助手</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.box{background:#1e293b;padding:30px;border-radius:16px;width:100%;max-width:400px;color:#fff}
+.title{font-size:22px;text-align:center;margin-bottom:20px}
+.status{padding:12px;border-radius:8px;text-align:center;margin-bottom:16px;font-weight:500}
+.waiting{background:#7c7000;color:#fffa}
+.using{background:#006500;color:#fffa}
+.disconnect{background:#650000;color:#fffa}
+.time{text-align:center;margin-bottom:10px;color:#ccc}
+.tip-box{padding:10px;background:#0f172a;border-radius:6px;font-size:14px;color:#94a3b8;text-align:center;margin-bottom:16px}
+input{width:100%;padding:12px;border-radius:8px;border:none;margin-bottom:10px;background:#334155;color:#fff}
+button{width:100%;padding:12px;border-radius:8px;border:none;background:#4f46e5;color:white;font-weight:bold;cursor:pointer;margin-bottom:10px}
+button:disabled{background:#475569;cursor:not-allowed}
+.log{margin-top:16px;padding:10px;background:#0f172a;border-radius:6px;font-size:13px;color:#ccc}
+.btn-row{display:flex;gap:10px;margin-bottom:10px}
+.btn-row button{flex:1;margin-bottom:0}
+.edit-btn{background:#64748b}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="title">游戏登录助手</div>
+  <div class="status disconnect" id="status">未连接</div>
+  <div class="time" id="timer"></div>
+  <div class="tip-box" id="tipText">提交邮箱后，请到邮箱查看验证码邮件，并填入下方输入框</div>
+  <input type="text" id="email" placeholder="邮箱">
+  <div class="btn-row">
+    <button id="btnEmail" disabled>提交邮箱</button>
+    <button class="edit-btn" id="editEmail" disabled>修改</button>
+  </div>
+  <input type="text" id="code" placeholder="验证码">
+  <div class="btn-row">
+    <button id="btnCode" disabled>提交验证码</button>
+    <button class="edit-btn" id="editCode" disabled>修改</button>
+  </div>
+  <div class="log" id="log"></div>
+</div>
+<script>
+const WS_URL = "wss://draw-residence-scrutiny.ngrok-free.dev";
+let ws, heartbeatTimer, timerCount, timeLeft = 300;
+let emailSubmitted = false, codeSubmitted = false;
+function status(txt, cls){document.getElementById('status').innerText=txt;document.getElementById('status').className='status '+cls;}
+function log(txt){document.getElementById('log').innerText=txt;}
+function setTip(txt){document.getElementById('tipText').innerText=txt;}
+function startTimer(){clearInterval(timerCount);timeLeft=300;timerCount=setInterval(()=>{timeLeft--;let m=Math.floor(timeLeft/60),s=timeLeft%60;document.getElementById('timer').innerText=`剩余时间：${m}分${s}秒`;if(timeLeft<=0){clearInterval(timerCount);timerCount=null;status("已超时，请刷新","waiting");}},1000);}
+function sendHeart(){if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:"heartbeat"}));}
+function sendEmail(){const btnEmail=document.getElementById('btnEmail');const v=document.getElementById('email').value.trim();if(!v||btnEmail.disabled)return;ws.send(JSON.stringify({type:"email",content:v}));log("✅ 提交成功！");emailSubmitted=true;btnEmail.textContent="已提交";btnEmail.disabled=true;document.getElementById('email').readOnly=true;document.getElementById('editEmail').disabled=false;document.getElementById('btnCode').disabled=false;setTip("✅ 已发送验证码邮件！请到邮箱查看后填入下方「验证码」输入框");}
+function resetEmail(){const btnEmail=document.getElementById('btnEmail');emailSubmitted=false;btnEmail.textContent="提交邮箱";btnEmail.disabled=false;document.getElementById('email').readOnly=false;document.getElementById('editEmail').disabled=true;document.getElementById('btnCode').disabled=true;document.getElementById('code').value="";resetCode();setTip("提交邮箱后，请到邮箱查看验证码邮件，并填入下方输入框");}
+function sendCode(){const btnCode=document.getElementById('btnCode');const v=document.getElementById('code').value.trim();if(!v||btnCode.disabled)return;ws.send(JSON.stringify({type:"code",content:v}));log("验证码已提交");codeSubmitted=true;btnCode.textContent="已提交";btnCode.disabled=true;document.getElementById('code').readOnly=true;document.getElementById('editCode').disabled=false;setTip("✅ 验证码已提交，正在处理你的请求，请十分钟后上游戏查看");}
+function resetCode(){const btnCode=document.getElementById('btnCode');codeSubmitted=false;btnCode.textContent="提交验证码";btnCode.disabled=false;document.getElementById('code').readOnly=false;document.getElementById('editCode').disabled=true;}
+function connect(){status("正在连接...","disconnect");log("连接中");ws=new WebSocket(WS_URL);ws.onopen=()=>{status("已连接，查询状态...","waiting");log("连接成功");heartbeatTimer=setInterval(sendHeart,1000);};ws.onmessage=(e)=>{const d=JSON.parse(e.data);if(d.status==="ok"){if(!timerCount)startTimer();status("✅ 正在使用（5分钟）","using");if(!emailSubmitted)document.getElementById('btnEmail').disabled=false;}else if(d.status==="waiting"){status(`⌛ 排队中 | 前面有${d.queue}人`,"waiting");log("等待上一位结束...");document.getElementById('btnEmail').disabled=true;document.getElementById('btnCode').disabled=true;}};ws.onclose=()=>{clearInterval(heartbeatTimer);clearInterval(timerCount);timerCount=null;status("连接断开","disconnect");log("已断开，请刷新");document.getElementById('btnEmail').disabled=true;document.getElementById('btnCode').disabled=true;};}
+document.getElementById('btnEmail').onclick=sendEmail;document.getElementById('editEmail').onclick=resetEmail;document.getElementById('btnCode').onclick=sendCode;document.getElementById('editCode').onclick=resetCode;
+window.onload=connect;
+</script>
+</body>
+</html>
