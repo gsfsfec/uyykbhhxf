@@ -175,6 +175,23 @@ body{
   border-top:1px solid rgba(100,160,255,0.12);
   margin-top:60px;
 }
+/* 音乐开关：右下角、极小、半透明 */
+.audio-btn{
+  position:fixed;
+  bottom:15px;
+  right:15px;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  border:none;
+  background:rgba(255,255,255,0.15);
+  color:#fff;
+  font-size:14px;
+  opacity:0.2;
+  z-index:9999;
+  cursor:pointer;
+}
+.audio-btn:hover{opacity:1;}
 /* 自适应 */
 @media(max-width:768px){
   .nav-a{display:none;}
@@ -185,7 +202,6 @@ body{
 </head>
 <body>
 <canvas class="snow"></canvas>
-
 <div class="nav">
   <div class="logo">PVZH · OFFICIAL</div>
   <div class="nav-a">
@@ -194,7 +210,6 @@ body{
     <a href="#">关于我们</a>
   </div>
 </div>
-
 <div class="main">
   <div class="box-card">
     <h1 class="title-h1">PVZH · 顶尖技术团队 · 高端稳定服务</h1>
@@ -206,32 +221,27 @@ body{
     <a href="#download-area" class="btn btn1">立即体验</a>
     <button class="btn btn2">了解更多</button>
   </div>
-
-  <!-- 下载区（已移到前面，每个按钮独立卡片） -->
+  <!-- 下载区 -->
   <div class="box-card download-section" id="download-area">
     <h1 class="title-h1">PVZH</h1>
     <p class="text-desc"></p>
-
     <div class="download-card">
       <h3>游戏安装包下载</h3>
       <p>PVZH安装包不限速下载</p>
       <a href="https://links.8uid.com/d/f51a50e60e66b7b17e03fdc46ce6feb9" class="download-btn">立即下载</a>
     </div>
-
     <div class="download-card">
       <h3>虚拟机下载</h3>
       <p>适配PVZH运行环境的虚拟机程序，稳定兼容，如果游戏安装包打不开或者闪退，就下载虚拟机使用</p>
       <a href="https://links.8uid.com/d/b374578ac6551ee45668bef2847df1e2" class="download-btn">立即下载</a>
     </div>
-
     <div class="download-card">
       <h3>购物卡链接</h3>
       <p>官方授权购卡渠道，安全便捷，为您提供稳定的服务支持，保障您的权益。</p>
       <a href="https://manfaka.com/shop/E3OHMUE1" class="download-btn shop-btn">前往购卡</a>
     </div>
   </div>
-
-  <!-- 功能卡片区（已移到最下面） -->
+  <!-- 功能卡片区 -->
   <div class="flex-row">
     <div class="min-card">
       <h3>顶尖团队</h3>
@@ -251,15 +261,14 @@ body{
     </div>
   </div>
 </div>
-
 <div class="footer">
   © 2026 PVZH · 高端技术服务平台 | 安全 · 稳定 · 高效
 </div>
-
+<!-- 右下角迷你音乐开关 -->
+<button class="audio-btn" id="audioBtn">🔊</button>
+<!-- 背景音乐：忘记.mp3，音量100% -->
 <audio id="bgMusic" loop preload="auto">
-  <source src="https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_MP3.mp3" type="audio/mpeg">
-
-
+  <source src="https://github.com/gsfsfec/uyykbhhxf/raw/refs/heads/main/%E5%BF%98%E8%AE%B0.mp3" type="audio/mpeg">
 <script>
 // 雪花
 const canvas=document.querySelector('.snow');
@@ -298,14 +307,33 @@ function render(){
 }
 render();
 window.addEventListener('resize',()=>{w=canvas.width=innerWidth;h=canvas.height=innerHeight;})
-
-// 背景音乐
+// 背景音乐：打开网站自动播放、音量100%、右下角开关
 const music=document.getElementById('bgMusic');
-document.addEventListener('click',()=>{
-  music.volume=0.3;
-  music.play();
-},{once:true})
-
+const audioBtn=document.getElementById('audioBtn');
+music.volume=1.0; // 100% 最大音量
+// 页面加载后尝试自动播放
+function tryPlay(){
+  music.play().then(()=>{
+    audioBtn.textContent='🔊';
+  }).catch(e=>{
+    console.log('浏览器限制自动播放，需用户交互');
+  });
+}
+window.addEventListener('load', tryPlay);
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden) tryPlay();
+});
+// 右下角开关
+audioBtn.onclick=function(e){
+  e.stopPropagation();
+  if(music.paused){
+    music.play();
+    this.textContent='';
+  }else{
+    music.pause();
+    this.textContent='';
+  }
+};
 // 平滑滚动
 document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
   anchor.addEventListener('click',function(e){
