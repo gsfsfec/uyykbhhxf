@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PVZH</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Microsoft Yahei,sans-serif;}
+body{
+  background: linear-gradient(135deg,#050a18,#0a1630,#061022);
+  min-height:100vh;
+  overflow-x:hidden;
+  color:#e6edf7;
+}
+/* 雪花 */
+.snow{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
+/* 导航 */
+.nav{
+  width:100%;
+  padding:20px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  backdrop-filter: blur(12px);
+  background:rgba(25,40,80,0.25);
+  border-bottom:1px solid rgba(120,180,255,0.15);
+  position:sticky;
+  top:0;
+  z-index:99;
+}
+.logo{
+  font-size:24px;
+  font-weight:700;
+  background:linear-gradient(90deg,#4fc3f7,#7c4dff);
+  -webkit-background-clip:text;
+  color:transparent;
+  letter-spacing:2px;
+}
+.nav-a{display:flex;gap:35px;}
+.nav-a a{
+  color:#c5d8f5;
+  text-decoration:none;
+  font-size:15px;
+  transition:0.3s ease;
+  position:relative;
+}
+.nav-a a:hover{color:#4fc3f7;}
+.nav-a a::after{
+  content:'';width:0;height:2px;background:#4fc3f7;
+  position:absolute;bottom:-5px;left:0;transition:0.3s;
+}
+.nav-a a:hover::after{width:100%;}
+/* 主内容 */
+.main{
+  max-width:1300px;
+  margin:80px auto;
+  padding:0 5%;
+  position:relative;
+  z-index:2;
+}
+.box-card{
+  background:rgba(30,50,95,0.3);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(110,170,255,0.2);
+  border-radius:16px;
+  padding:45px;
+  margin-bottom:30px;
+  transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+.box-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 15px 40px rgba(30,120,255,0.22);
+  border-color:rgba(100,190,255,0.4);
+}
+.title-h1{
+  font-size:38px;
+  margin-bottom:20px;
+  color:#ffffff;
+}
+.text-desc{
+  font-size:16px;
+  line-height:1.8;
+  color:#b4c8e8;
+  margin-bottom:35px;
+}
+.btn{
+  padding:14px 36px;
+  border-radius:50px;
+  border:none;
+  font-size:15px;
+  cursor:pointer;
+  transition:0.3s;
+  margin-right:15px;
+  text-decoration:none;
+  display:inline-block;
+  text-align:center;
+}
+.btn1{
+  background:linear-gradient(120deg,#2196f3,#673ab7);
+  color:#fff;
+}
+.btn1:hover{opacity:0.9;transform:scale(1.05);}
+.btn2{
+  background:transparent;
+  border:1px solid #4fc3f7;
+  color:#4fc3f7;
+}
+.btn2:hover{background:rgba(79,195,247,0.15);}
+/* 下载卡片（独立样式，和功能卡片统一） */
+.download-section .download-card{
+  padding:30px;
+  border-radius:14px;
+  background:rgba(22,38,70,0.35);
+  border:1px solid rgba(130,190,255,0.18);
+  margin-bottom:20px;
+  transition:0.3s;
+}
+.download-section .download-card:hover{transform:scale(1.02);border-color:#4fc3f7;}
+.download-section .download-card h3{
+  font-size:20px;
+  margin-bottom:12px;
+  color:#e0ecff;
+}
+.download-section .download-card p{
+  color:#9cb8e0;
+  font-size:14px;
+  line-height:1.7;
+  margin-bottom:20px;
+}
+.download-btn{
+  padding:12px 30px;
+  border-radius:50px;
+  background:linear-gradient(120deg,#1f88eb,#5856d6);
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  font-size:15px;
+  transition:0.3s;
+  display:inline-block;
+}
+.download-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 30px rgba(31,136,235,0.35);
+}
+/* 购物卡按钮（配色区分） */
+.shop-btn{
+  background:linear-gradient(120deg,#f59e0b,#d97706);
+}
+.shop-btn:hover{
+  box-shadow:0 10px 30px rgba(245,158,11,0.35);
+}
+/* 功能小卡片 */
+.flex-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:25px;
+  margin-top:50px;
+}
+.min-card{
+  padding:30px;
+  border-radius:14px;
+  background:rgba(22,38,70,0.35);
+  border:1px solid rgba(130,190,255,0.18);
+  transition:0.3s;
+}
+.min-card:hover{transform:scale(1.03);border-color:#4fc3f7;}
+.min-card h3{font-size:20px;margin-bottom:12px;color:#e0ecff;}
+.min-card p{color:#9cb8e0;font-size:14px;line-height:1.7;}
+/* 底部 */
+.footer{
+  text-align:center;
+  padding:40px 0;
+  color:#7894c2;
+  font-size:14px;
+  border-top:1px solid rgba(100,160,255,0.12);
+  margin-top:60px;
+}
+/* 自适应 */
+@media(max-width:768px){
+  .nav-a{display:none;}
+  .title-h1{font-size:28px;}
+  .box-card{padding:25px;}
+}
+</style>
+</head>
+<body>
+<canvas class="snow"></canvas>
+
+<div class="nav">
+  <div class="logo">PVZH · OFFICIAL</div>
+  <div class="nav-a">
+    <a href="#">首页</a>
+    <a href="#download-area">下载中心</a>
+    <a href="#">关于我们</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="box-card">
+    <h1 class="title-h1">PVZH · 顶尖技术团队 · 高端稳定服务</h1>
+    <p class="text-desc">
+      我们拥有行业顶尖技术团队，具备顶级研发实力与完善运维体系；
+      提供最高级功能体验、极致流畅性能、全程安全保障。
+      专业、稳定、高效、安全，您可完全放心使用。
+    </p>
+    <a href="#download-area" class="btn btn1">立即体验</a>
+    <button class="btn btn2">了解更多</button>
+  </div>
+
+  <!-- 下载区（已移到前面，每个按钮独立卡片） -->
+  <div class="box-card download-section" id="download-area">
+    <h1 class="title-h1">PVZH</h1>
+    <p class="text-desc"></p>
+
+    <div class="download-card">
+      <h3>游戏安装包下载</h3>
+      <p>PVZH安装包不限速下载</p>
+      <a href="https://links.8uid.com/d/f51a50e60e66b7b17e03fdc46ce6feb9" class="download-btn">立即下载</a>
+    </div>
+
+    <div class="download-card">
+      <h3>虚拟机下载</h3>
+      <p>适配PVZH运行环境的虚拟机程序，稳定兼容，如果游戏安装包打不开或者闪退，就下载虚拟机使用</p>
+      <a href="https://links.8uid.com/d/b374578ac6551ee45668bef2847df1e2" class="download-btn">立即下载</a>
+    </div>
+
+    <div class="download-card">
+      <h3>购物卡链接</h3>
+      <p>官方授权购卡渠道，安全便捷，为您提供稳定的服务支持，保障您的权益。</p>
+      <a href="https://manfaka.com/shop/E3OHMUE1" class="download-btn shop-btn">前往购卡</a>
+    </div>
+  </div>
+
+  <!-- 功能卡片区（已移到最下面） -->
+  <div class="flex-row">
+    <div class="min-card">
+      <h3>顶尖团队</h3>
+      <p>专业技术团队，经验丰富，持续优化与维护</p>
+    </div>
+    <div class="min-card">
+      <h3>高级功能</h3>
+      <p>顶级架构设计，性能强劲，体验领先同行</p>
+    </div>
+    <div class="min-card">
+      <h3>安全稳定</h3>
+      <p>全程加密防护，运行稳定可靠，数据安全无忧</p>
+    </div>
+    <div class="min-card">
+      <h3>极速下载</h3>
+      <p>高速直链分发，不限速，一键直达</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  © 2026 PVZH · 高端技术服务平台 | 安全 · 稳定 · 高效
+</div>
+
+<audio id="bgMusic" loop preload="auto">
+  <source src="https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_MP3.mp3" type="audio/mpeg">
+
+
+<script>
+// 雪花
+const canvas=document.querySelector('.snow');
+const ctx=canvas.getContext('2d');
+let w=canvas.width=window.innerWidth;
+let h=canvas.height=window.innerHeight;
+let snowArr=[];
+class Snow{
+  constructor(){
+    this.x=Math.random()*w;
+    this.y=Math.random()*h-h;
+    this.r=Math.random()*2+1;
+    this.speed=Math.random()*1+0.5;
+    this.wind=Math.random()*0.5-0.25;
+  }
+  move(){
+    this.y+=this.speed;
+    this.x+=this.wind;
+    if(this.y>h){
+      this.y=-10;
+      this.x=Math.random()*w;
+    }
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,0.7)';
+    ctx.fill();
+  }
+}
+for(let i=0;i<120;i++)snowArr.push(new Snow());
+function render(){
+  ctx.clearRect(0,0,w,h);
+  snowArr.forEach(item=>{item.move();item.draw();})
+  requestAnimationFrame(render);
+}
+render();
+window.addEventListener('resize',()=>{w=canvas.width=innerWidth;h=canvas.height=innerHeight;})
+
+// 背景音乐
+const music=document.getElementById('bgMusic');
+document.addEventListener('click',()=>{
+  music.volume=0.3;
+  music.play();
+},{once:true})
+
+// 平滑滚动
+document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+  anchor.addEventListener('click',function(e){
+    e.preventDefault();
+    document.querySelector(this.getAttribute('href')).scrollIntoView({
+      behavior:'smooth'
+    });
+  });
+});
+</script>
+</body>
+</html>
