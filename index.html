@@ -228,7 +228,7 @@ body{
     <div class="download-card">
       <h3>游戏安装包下载</h3>
       <p>PVZH安装包不限速下载最新版，己更新如果游戏提示要更新重新点击此按钮更新，当前链接版本2.0</p>
-      <a href="https://links.8uid.com/d/f682f38bc4c0148cc6cc94f04f19794c">立即下载</a>
+      <a href="https://links.8uid.com/d/f682f38bc4c0148cc6cc94f04f19794c" class="download-btn">立即下载</a>
     </div>
     <div class="download-card">
       <h3>购物卡链接</h3>
@@ -285,7 +285,7 @@ class Snow{
     this.speed=Math.random()*1+0.5;
     this.wind=Math.random()*0.5-0.25;
   }
-  move(){
+    move(){
     this.y+=this.speed;
     this.x+=this.wind;
     if(this.y>h){
