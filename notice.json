@@ -1,8 +1,12 @@
 {
+    "need_app_version": "2.0",
     "ctrl_num": 1,
-    "title": "提示",
-    "content": "当前版本1.1欢迎使用",
-    "cancel_text": "关闭",
-    "ok_text": "前往更新",
-    "update_url": "此处填写下载链接"
+    "new_title": "温馨提示",
+    "new_content": "欢迎使用 PvZ 极速发包辅助程序！1.0 版本发包上限已完全解除。",
+    "new_cancel_text": "关闭",
+    "new_ok_text": "",
+    "old_title": "版本更新提示",
+    "old_content": "当前版本过低，请下载最新版本v2.0 使用",
+    "old_ok_text": "前往更新",
+    "update_url": "https://替换成你的APK下载直链"
 }
