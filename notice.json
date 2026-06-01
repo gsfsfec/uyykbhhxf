@@ -1,0 +1,8 @@
+{
+    "ctrl_num": 1,
+    "title": "提示",
+    "content": "当前版本1.0欢迎使用",
+    "cancel_text": "关闭",
+    "ok_text": "前往更新",
+    "update_url": "此处填写下载链接"
+}
