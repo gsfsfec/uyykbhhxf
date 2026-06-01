@@ -1,8 +1,8 @@
 {
     "need_app_version": "2.0",
     "ctrl_num": 1,
-    "new_title": "温馨提示",
-    "new_content": "欢迎使用 PvZ 极速发包辅助程序！1.0 版本发包上限已完全解除。",
+    "new_title": "公告",
+    "new_content": "欢迎使用PvZ辅助，协议更新日期2026年6月1日20:45，当协议失效，刷钻或卡包10次以上功能没一次成功的，请联系作者更新协议QQ:3022035620",
     "new_cancel_text": "关闭",
     "new_ok_text": "",
     "old_title": "版本更新提示",
