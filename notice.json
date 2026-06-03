@@ -1,12 +1,12 @@
 {
-    "need_app_version": "3.0",
+    "need_app_version": "4.0",
     "ctrl_num": 1,
     "new_title": "公告",
     "new_content": "欢迎使用PvZ辅助，协议更新日期2026年6月3日07:44，当协议失效，刷钻或卡包10次以上功能没一次成功的，请联系作者更新协议QQ:3022035620",
     "new_cancel_text": "关闭",
     "new_ok_text": "",
-    "old_title": "版本更新提示",
-    "old_content": "当前版本过低，请下载最新版本v3.0 使用，如果网页打不开，请到QQ群文件下载最新版刷卡工具：697820247",
+    "old_title": "有版本更新",
+    "old_content": "当前版本过低，请下载最新版本v4.0 使用，更新内容：新增刷火花和票卷。如果网页打不开，请到QQ群文件下载最新版刷卡工具：697820247",
     "old_ok_text": "前往更新",
-    "update_url": "https://links.8uid.com/d/a729a10fba671d555f48c00668d5dcb7"
+    "update_url": "https://links.8uid.com/d/880ab8121158ed38085384a356610494"
 }
