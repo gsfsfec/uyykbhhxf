@@ -1,12 +1,12 @@
 {
-    "need_app_version": "5.0",
+    "need_app_version": "6.0",
     "ctrl_num": 1,
     "new_title": "公告",
     "new_content": "欢迎使用PvZ工具。免责声明：使用本软件一切后果自负与作者无关，继续使用将默认同意此声明。（放心使用无封号风险，可正常打排位）公告更新日期2026年6月3日08:44",
     "new_cancel_text": "关闭",
     "new_ok_text": "",
     "old_title": "有版本更新",
-    "old_content": "当前版本过低，请下载最新版本v5.0 使用，更新内容：加入新协议，修复概率刷了获得不到奖励。如果网页打不开，请到QQ群文件下载最新版刷卡工具：697820247",
+    "old_content": "当前版本过低，请下载最新版本v6.0 使用，更新内容：加入更多协议节点，修复概率刷了获得不到奖励。如果网页打不开，请到QQ群文件下载最新版刷卡工具：697820247",
     "old_ok_text": "前往更新",
-    "update_url": "https://links.8uid.com/d/8da6c61793580026077e2f0f853ae2a7"
+    "update_url": "https://links.8uid.com/d/016f9d702e54b0b61c0770bcde2377c3"
 }
