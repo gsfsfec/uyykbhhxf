@@ -1,12 +1,32 @@
-{
-    "need_app_version": "9.2",
-    "ctrl_num": 1,
-    "new_title": "今日公告（请认真阅读）",
-    "new_content": "今天8月2日周日，服务器在凌晨1:20完成维护可以正常刷东西了。注意刷卡包是没有开包动画的是自动开完的，所有东西刷完后重进游戏即可。如果需要解绑ID请点击输入框旁边的获取卡密按钮,等公告弹出来之后，把获取的卡密输入上去即可解绑,如有问题请联系作者QQ:3822035620，绑定ID说明：绑定后以后只能输入这个绑定的ID刷东西，ID绑满后会无法使用其他ID。宝子们作者快没钱维护服务器了T一T   打赏一点吧谢谢尼（つ♡⊂），作者在这里感谢已经打赏的宝宝们♡祝你们金榜题名，前程似锦。欢迎使用PvZ工具，刷东西功能完全免费随便刷无上限，（注意:所有东西刷完后要重启游戏才可以收到）免责声明：使用本软件一切后果自负与作者无关，继续使用将默认同意此声明。（放心使用无封号风险，可正常打排位）  本软件作者：是朵朵啊",
-    "new_cancel_text": "关闭",
-    "new_ok_text": "",
-    "old_title": "有版本更新",
-    "old_content": "当前版本过低，请点击下方前往更新按钮下载最新版本v9.2使用更新内容:0.修复按钮显示文字错误1.刷卡包功能修复2.刷卡包更新更多卡包共计307种卡包,如若无法更新请到QQ群下载群号:127377148，如果无法安装，请卸载原版进行安装",
-    "old_ok_text": "点击此按钮更新",
-    "update_url": "https://links.8uid.com/d/0f663c8abb65708edf3fc3ffb3452227"
-}
+[
+    {
+        "id": 1,
+        "access_token": "QVQxOjMuMDozLjA6NzIwOktINXh1RVk1ZldUbzdkMmlYRGY2NzY2ZWFSNGZIRjJtc25MOjU0NzU6c2M2aXY",
+        "refresh_token": "UlQxOjMuMDozLjA6MjAxNjA6cE1sc0E1bTVXRDFPeFQ1QjVqMkZDdlNRUVlCSHpud3RXOjU0NzU6c2M2aXY.3hQnzvYEXkBANmDE8Jp8gTF0H4",
+        "executor_persona_id": "1006821605475"
+    },
+    {
+        "id": 2,
+        "access_token": "QVQxOjMuMDozLjA6NzIwOm1FclVzU2I0NDZWY2dXVXZ5Rm8yVlU5M3JSa3cwN05ndENFOjc5NjA1OnNjNmlx",
+        "refresh_token": "UlQxOjMuMDozLjA6MjAxNjA6QjRQVndmU1kzOGNQeUNsTjRRYnM1UFBtNDVpODRUNmhEOjc5NjA1OnNjNmlx.Rq7wC2saZqOm0S6mwa27GSo5fp",
+        "executor_persona_id": "1009730979605"
+    },
+    {
+        "id": 3,
+        "access_token": "QVQxOjMuMDozLjA6NzIwOnhiUnVIM1dKVmtoT1ZLdDVISTNlQzNJeXUzZmxwN1ZxQkI2OjU3MTpzYzZqMg",
+        "refresh_token": "UlQxOjMuMDozLjA6MjAxNjA6MUhDdkUzc09SbjZmM1FVbFdHcmxIY25Za09KbkVvM1llOjU3MTpzYzZqMg.9tNyCuQeTan3LYiGoNDlu6I8Dy",
+        "executor_persona_id": "1007977000571"
+    },
+    {
+        "id": 4,
+        "access_token": "QVQxOjMuMDozLjA6NzIwOkcyQTZrOFlva0VreG1vYnJ4UjVpZ2pDNU9yaTladFJxbjRnOjc2MDY6c2M2ajk",
+        "refresh_token": "UlQxOjMuMDozLjA6MjAxNjA6S1VnY01pTzRveGJ6bGxjYTVxNHhMYUcxT1pLM1VsQlNLOjc2MDY6c2M2ajk.SRv2GUUhxxuOZnAF9vm7bm6bTC",
+        "executor_persona_id": "1011425107606"
+    },
+    {
+        "id": 5,
+        "access_token": "QVQxOjMuMDozLjA6NzIwOnU4dzFJcnN1NkY4ekREUDgzeE1uZzRQOWxMTmxsbEtQeGtNOjE3Mzc5OnNjNmpk",
+        "refresh_token": "UlQxOjMuMDozLjA6MjAxNjA6bmJ5VXN0eEhKRVJoZldtUnBQUE04OE9CdnJya3FJVjZQOjE3Mzc5OnNjNmpk.LuwIVjLCru6ocAVujzZ589JOSd",
+        "executor_persona_id": "1007701317379"
+    }
+]
