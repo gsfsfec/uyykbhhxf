@@ -1,15 +1,15 @@
 {
-    "need_app_version": "1.0",
+    "need_app_version": "12.963",
     "ctrl_num": 1,
     "new_title": "今日公告（请认真阅读）",
     "new_content": "欢迎使用，应用内置有使用教程，新手先观看教程，不要瞎问，购买卡包想看开包动画就请取消勾选静默消除红点选项，刷好后上游戏点钻石那里的红点即可，排位刷星暂不开放。本软件作者：是朵朵啊",
     "nomm_on": "2",
     "new_cancel_text": "关闭",
     "new_ok_text": "",
-    "old_title": "有版本更新",
-    "old_content": "当前版本过低，请点击下方前往更新按钮下载最新版本v1.0使用更新内容:0.修复按钮显示文字错误1.刷卡包功能修复2.刷卡包更新更多卡包共计307种卡包,如若无法更新请到QQ群下载群号:127377148，如果无法安装，请卸载原版进行安装",
-    "old_ok_text": "点击此按钮更新",
-    "update_url": "https://links.8uid.com/d/0f663c8abb65708edf3fc3ffb3452227",
+    "old_title": "服务器已停用",
+    "old_content": "当前版本已暂停使用，服务器已关闭",
+    "old_ok_text": "",
+    "update_url": "https://www.baidu.com",
     "card_list": [
         {
             "card_key": "DDNBDXDI",
