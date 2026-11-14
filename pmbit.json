@@ -3,40 +3,30 @@
         "id": 1,
         "access_token": "QVQxOjMuMDozLjA6NzIwOld4WDdMZWZsN0FGSXpsQ05WcHNiamhxOG0xUkZhMVlEU04yOjc5NjA1OnNncDl0",
         "refresh_token": "UlQxOjMuMDozLjA6MjAxNjA6aGMycEpaM3ZzZGxReE8xN0IySDJZejdxRk12UlAwcWNiOjc5NjA1OnNncDl0.qW4Es2YPM974d2j8fKfOi6INHS",
-        "executor_persona_id": "1009730979605",
-        "access_expire": 1794662605,
-        "refresh_expire": 1795829005
+        "executor_persona_id": "1009730979605"
     },
     {
         "id": 2,
         "access_token": "QVQwOjMuMDozLjA6NzIwOmI3UzNvbkRFN2pDZmxlOFpMTkpHYWh3Snkwb3NnZFFvaGp6OjU0NzU6c2dubzA",
         "refresh_token": "UlQwOjMuMDozLjA6MjAxNjA6b01rMzRCS3cyS2t3ZUFQYWpjUVEzWHRRdGVLdXM4aFVKOjU0NzU6c2dubzA.vlqpZ8WoxHTrtQ394n8GW0yiBM",
-        "executor_persona_id": "1006821605475",
-        "access_expire": 1794566765,
-        "refresh_expire": 1795733165
+        "executor_persona_id": "1006821605475"
     },
     {
         "id": 3,
         "access_token": "QVQxOjMuMDozLjA6NzIwOkg0RjN6ZVYzSXljNThsSHkyWElsV3B0dG96OFlpSWVQaGNuOjU3MTpzZ3BhMQ",
         "refresh_token": "UlQxOjMuMDozLjA6MjAxNjA6RmQ5bjhyMXRSMmlWeDJWVlBSNEZabHZOUDFqZ0tzZXgzOjU3MTpzZ3BhMQ.GXFTuGFi5YvXkOYEquhtTWFm2L",
-        "executor_persona_id": "1007977000571",
-        "access_expire": 1794662855,
-        "refresh_expire": 1795829255
+        "executor_persona_id": "1007977000571"
     },
     {
         "id": 4,
         "access_token": "QVQxOjMuMDozLjA6NzIwOkVzRG9EWjhJbTQ2WjY0bUluVnR6RHQwMUVDSFlDa3o2NTRiOjc2MDY6c2dwYTM",
         "refresh_token": "UlQxOjMuMDozLjA6MjAxNjA6Uk5qNzMzQ1I2cHI1MUdBdlVXckNPRTNZWUgxTXlVZjVoOjc2MDY6c2dwYTM.4EkQpH6bLf94L61BeekN72KsSV",
-        "executor_persona_id": "1011425107606",
-        "access_expire": 1794662989,
-        "refresh_expire": 1795829389
+        "executor_persona_id": "1011425107606"
     },
     {
         "id": 5,
         "access_token": "QVQxOjMuMDozLjA6NzIwOjlPWGplcHFQMHZWMWl4N2dSdGtqVU40NDVMbDBkR3RxbHhKOjE3Mzc5OnNncGE2",
         "refresh_token": "UlQxOjMuMDozLjA6MjAxNjA6dElLRThiYzhBNFZRZ3lhQUZqNkJxSUNobmF4TjluTm9ZOjE3Mzc5OnNncGE2.c391FUprJKePuonc7m8KCzUXLB",
-        "executor_persona_id": "1007701317379",
-        "access_expire": 1794663123,
-        "refresh_expire": 1795829523
+        "executor_persona_id": "1007701317379"
     }
 ]
